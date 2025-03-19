@@ -9,6 +9,9 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
@@ -17,84 +20,26 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.Response
-import com.example.weatherapp.R
+import androidx.lifecycle.viewmodel.compose.viewModel
+
 
 @Preview(showSystemUi = true)
 @Composable
+fun HomeScreen(viewModel: WeatherViewModel) {
+    val weatherState by viewModel.weatherData.collectAsState()
 
-//fun HomeScreen() {
-//    Column(
-//        modifier = Modifier
-//            .fillMaxSize()
-//            .padding(16.dp),
-//        horizontalAlignment = Alignment.CenterHorizontally
-//    ) {
-//        // City Name
-//        Text(
-//            modifier = Modifier.padding(8.dp),
-//            text = "Cairo, Egypt",
-//            fontSize = 24.sp,
-//            textAlign = TextAlign.Center
-//        )
-//
-//        Spacer(modifier = Modifier.height(8.dp))
-//
-//        // Weather Icon
-//        val weatherIcon: Painter = painterResource(id = R.drawable.weather_ic) // Replace with real image
-//        Image(
-//            painter = weatherIcon,
-//            contentDescription = "Weather Icon",
-//            modifier = Modifier.size(100.dp)
-//        )
-//
-//        Spacer(modifier = Modifier.height(8.dp))
-//
-//        // Temperature
-//        Text(
-//            text = "28°C",
-//            fontSize = 68.sp
-//        )
-//
-//        Spacer(modifier = Modifier.height(8.dp))
-//
-//        // Weather Description
-//        Text(
-//            text = "Clear Sky",
-//            fontSize = 18.sp
-//        )
-//
-//        Spacer(modifier = Modifier.height(16.dp))
-//
-//        //  Weather Details
-//        Row(
-//            modifier = Modifier.fillMaxWidth(),
-//            horizontalArrangement = Arrangement.SpaceEvenly
-//        ) {
-//            WeatherDetailItem("Humidity", "60%")
-//            WeatherDetailItem("Wind", "10 km/h")
-//            WeatherDetailItem("Pressure", "1012 hPa")
-//        }
-//
-//        Spacer(modifier = Modifier.height(20.dp))
-//
-//        // Hourly Forecast
-//        Text(
-//            text = "Hourly Forecast",
-//            fontSize = 20.sp
-//        )
-//
-//        LazyRow(
-//            modifier = Modifier.fillMaxWidth()
-//        ) {
-//            items(listOf("12PM", "1PM", "2PM", "3PM")  , )  { hour ->
-//                HourlyWeatherItem(hour, "25°C")
-//            }
-//        }
-//    }
-//}
 
-fun HomeScreen(response: Response) {
+    if (weatherState == null) {
+        CircularProgressIndicator() // Show loading indicator while fetching data
+    } else {
+        WeatherScreen(weatherState!!)
+    }
+}
+
+
+@Composable
+fun WeatherScreen(response:  Response) {
+
     val cityName = response.city?.name ?: "Unknown"
     val country = response.city?.country ?: ""
     val temperature = response.list?.firstOrNull()?.main?.temp?.toString() ?: "--"
@@ -172,6 +117,8 @@ fun HomeScreen(response: Response) {
     }
 }
 
+
+
 @Composable
 fun WeatherDetailItem(title: String, value: String) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -194,5 +141,13 @@ fun HourlyWeatherItem(time: String, temp: String) {
             modifier = Modifier.size(40.dp)
         )
         Text(text = temp, fontSize = 16.sp)
+    }
+}
+
+
+@Composable
+fun LoadingScreen() {
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        CircularProgressIndicator()
     }
 }
