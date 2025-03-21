@@ -4,6 +4,7 @@ package com.example.weatherapp
 
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.gestures.snapping.SnapPosition
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -28,9 +29,12 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 fun HomeScreen(viewModel: WeatherViewModel) {
     val weatherState by viewModel.weatherData.collectAsState()
 
+    LaunchedEffect(Unit) {
+        viewModel.fetchWeather()
+    }
 
     if (weatherState == null) {
-        CircularProgressIndicator() // Show loading indicator while fetching data
+        CircularProgressIndicator()
     } else {
         WeatherScreen(weatherState!!)
     }

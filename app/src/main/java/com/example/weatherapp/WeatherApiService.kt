@@ -17,7 +17,7 @@ interface WeatherApiService {
     ): Response
 
 
-    @GET("forecast") // This endpoint fetches the 5-day forecast
+    @GET("forecast") //fetches the 5-day forecast
     suspend fun getForecast(
         @Query("lat") lat: Double,
         @Query("lon") lon: Double,

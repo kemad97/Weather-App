@@ -13,10 +13,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class WeatherViewModel (private val repository: WeatherRepository) : ViewModel() {
-    val lat = 30.0444
-    val lon = 31.2357
-    val apiKey = "557286fc08f4438364702631194d8280"
-
 
     private val _weatherData = MutableStateFlow<Response?>(null)
     val weatherData: StateFlow<Response?> = _weatherData
@@ -32,8 +28,12 @@ class WeatherViewModel (private val repository: WeatherRepository) : ViewModel()
                 val lon = 31.2357
                 val apiKey = "557286fc08f4438364702631194d8280"
 
-                val response = repository.fetchWeather(lat, lon, apiKey).first()
-                _weatherData.value = response
+                val response = repository.fetchWeather(lat, lon, apiKey).collect(){
+                    response ->
+                    _weatherData.value = response
+                    Log.d("WeatherData", "Received: $response + ${response.city?.name}")
+
+                }
             } catch (e: Exception) {
                 Log.e("API_ERROR", "Failed to fetch weather data: ${e.message}")
             }

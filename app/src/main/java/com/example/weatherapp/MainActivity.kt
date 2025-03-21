@@ -23,7 +23,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
 
-        val repository = WeatherRepository()
+        val repository = WeatherRepository.getInstance()
+        repository.fetchWeather(30.0444, 31.2357, "557286fc08f4438364702631194d8280")
         val viewModel = ViewModelProvider(this, WeatherViewModelFactory(repository))[WeatherViewModel::class.java]
 
         setContent {
