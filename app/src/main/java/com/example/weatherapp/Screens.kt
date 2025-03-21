@@ -21,15 +21,13 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.decode.GifDecoder
 import coil.request.ImageRequest
+import com.example.weatherapp.model.Response
+import com.example.weatherapp.viewmodel.WeatherViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(viewModel: WeatherViewModel = viewModel()) {
     val weatherState by viewModel.weatherData.collectAsState()
-
-    LaunchedEffect(Unit) {
-        viewModel.fetchWeather()
-    }
 
     Scaffold(
         topBar = {

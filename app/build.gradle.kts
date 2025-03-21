@@ -87,4 +87,9 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
 //Serialization for NavArgs
     implementation(libs.kotlinx.serialization.json)
+
+
+    implementation(libs.play.services.location)
+    implementation(libs.androidx.lifecycle.runtime.ktx.v262)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
 }
