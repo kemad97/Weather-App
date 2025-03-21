@@ -76,6 +76,8 @@ dependencies {
 
 
     implementation(libs.coil.compose)
+    implementation(libs.coil.gif) // Enables GIF animation support
+
 
     implementation (libs.androidx.room.ktx)
     implementation (libs.androidx.room.runtime)

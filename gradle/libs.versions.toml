@@ -1,6 +1,7 @@
 [versions]
 agp = "8.8.0"
 coilCompose = "2.5.0"
+coilGif = "2.1.0"
 compose = "1.0.0-beta01"
 converterGson = "2.11.0"
 kotlin = "2.0.0"
@@ -27,6 +28,7 @@ kotlinxSerializationJson = "1.8.0"
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomKtx" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
+coil-gif = { module = "io.coil-kt:coil-gif", version.ref = "coilGif" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomKtx" }
