@@ -2,10 +2,14 @@
 
 package com.example.weatherapp
 
+import android.icu.text.SimpleDateFormat
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -23,7 +27,9 @@ import coil.compose.AsyncImage
 import coil.decode.GifDecoder
 import coil.request.ImageRequest
 import com.example.weatherapp.model.ApiResponse
+import com.example.weatherapp.model.ListItem
 import com.example.weatherapp.viewmodel.WeatherViewModel
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview(showSystemUi = true)
@@ -55,15 +61,12 @@ fun WeatherScreen(apiResponse: ApiResponse) {
     val windSpeed = apiResponse.list?.firstOrNull()?.wind?.speed?.toString() ?: "--"
     val pressure = apiResponse.list?.firstOrNull()?.main?.pressure?.toString() ?: "--"
 
-
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ) {
+    Box(modifier = Modifier.fillMaxSize()) {
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
                 .data(R.drawable.sunnyg)
                 .crossfade(true)
-                .decoderFactory(GifDecoder.Factory()) 
+                .decoderFactory(GifDecoder.Factory())
                 .build(),
             contentDescription = "Animated Background",
             contentScale = ContentScale.Crop,
@@ -87,7 +90,6 @@ fun WeatherScreen(apiResponse: ApiResponse) {
 
             Spacer(modifier = Modifier.height(8.dp))
             Text(text = "$temperature°C", fontSize = 64.sp)
-            Spacer(modifier = Modifier.height(8.dp))
             Text(text = description, fontSize = 18.sp)
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -102,12 +104,73 @@ fun WeatherScreen(apiResponse: ApiResponse) {
 
             Spacer(modifier = Modifier.height(20.dp))
             Text(text = "Hourly Forecast", fontSize = 20.sp)
-
-            LazyRow(modifier = Modifier.fillMaxWidth()) {
-                items(apiResponse.list ?: emptyList()) { item ->
-                    HourlyWeatherItem(item?.dtTxt ?: "--", "${item?.main?.temp ?: "--"}°C")
+            LazyRow(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp)
+            ) {
+                items(apiResponse.list?.take(8) ?: emptyList()) { item ->
+                    HourlyWeatherItem(
+                        time = formatTime(item?.dtTxt ?: ""),
+                        temp = "${item?.main?.temp ?: "--"}°C"
+                    )
                 }
             }
+
+            // 7 day forecase
+            Spacer(modifier = Modifier.height(20.dp))
+            Text(text = "7-Day Forecast", fontSize = 20.sp)
+            LazyRow  (
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.CenterHorizontally)
+                    .padding(vertical = 8.dp)
+            ) {
+                val dailyForecasts = apiResponse.list
+                    ?.filterNotNull()
+                    ?.groupBy { it.dtTxt?.substring(0, 10) }
+                    ?.map { it.value.first() }
+                    ?.take(5)
+                    ?: emptyList()
+
+                items(dailyForecasts) { forecast ->
+                    DailyForecastItem(forecast)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun DailyForecastItem(forecast: ListItem) {
+    Card(
+        modifier = Modifier
+            .padding(8.dp)
+            .width(120.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = formatDate(forecast.dtTxt ?: ""),
+                fontSize = 14.sp,
+                textAlign = TextAlign.Center
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Image(
+                painter = getWeatherIcon(forecast.weather?.firstOrNull()?.description ?: ""),
+                contentDescription = "Weather Icon",
+                modifier = Modifier.size(40.dp)
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(text = "${forecast.main?.temp ?: "--"}°C", fontSize = 16.sp)
+            Text(
+                text = forecast.weather?.firstOrNull()?.description ?: "",
+                fontSize = 12.sp,
+                textAlign = TextAlign.Center,
+                maxLines = 1
+            )
         }
     }
 }
@@ -148,7 +211,29 @@ fun getWeatherIcon(description: String): Painter {
         description.contains("cloud", ignoreCase = true) -> painterResource(id = R.drawable.weather_ic)
         description.contains("rain", ignoreCase = true) -> painterResource(id = R.drawable.weather_ic)
         description.contains("sun", ignoreCase = true) -> painterResource(id = R.drawable.weather_ic)
-        else -> painterResource(id = R.drawable.weather_ic) // Default icon
+        else -> painterResource(id = R.drawable.weather_ic)
+    }
+}
+
+private fun formatDate(dateStr: String): String {
+    return try {
+        val inputFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+        val outputFormat = SimpleDateFormat("EEE, MMM d", Locale.getDefault())
+        val date = inputFormat.parse(dateStr)
+        outputFormat.format(date ?: return dateStr)
+    } catch (e: Exception) {
+        dateStr
+    }
+}
+
+private fun formatTime(dateStr: String): String {
+    return try {
+        val inputFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+        val outputFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+        val date = inputFormat.parse(dateStr)
+        outputFormat.format(date ?: return dateStr)
+    } catch (e: Exception) {
+        dateStr
     }
 }
 
