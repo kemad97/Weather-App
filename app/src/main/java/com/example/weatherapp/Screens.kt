@@ -15,44 +15,45 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.decode.GifDecoder
 import coil.request.ImageRequest
-import com.example.weatherapp.model.Response
+import com.example.weatherapp.model.ApiResponse
 import com.example.weatherapp.viewmodel.WeatherViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
+@Preview(showSystemUi = true)
 @Composable
 fun HomeScreen(viewModel: WeatherViewModel = viewModel()) {
     val weatherState by viewModel.weatherData.collectAsState()
 
     Scaffold(
-        topBar = {
-            TopAppBar(title = { Text(text = weatherState?.city?.name ?: "Weather App") })
-        }
-    ) { paddingValues ->
+
+    ) {paddingValues->
         Box(modifier = Modifier.padding(paddingValues)) {
-            if (weatherState == null) {
-                LoadingScreen()
-            } else {
-                WeatherScreen(weatherState!!)
-            }
+        when (weatherState) {
+            is ResultState.Loading -> LoadingScreen()
+            is ResultState.Success -> WeatherScreen((weatherState as ResultState.Success<ApiResponse>).data)
+            is ResultState.Error -> ErrorScreen((weatherState as ResultState.Error).exception.message)
+            ResultState.Empty -> EmptyScreen()
+        }
         }
     }
 }
 
 @Composable
-fun WeatherScreen(response: Response) {
-    val cityName = response.city?.name ?: "Unknown"
-    val country = response.city?.country ?: ""
-    val temperature = response.list?.firstOrNull()?.main?.temp?.toString() ?: "--"
-    val description = response.list?.firstOrNull()?.weather?.firstOrNull()?.description ?: "Unknown"
-    val humidity = response.list?.firstOrNull()?.main?.humidity?.toString() ?: "--"
-    val windSpeed = response.list?.firstOrNull()?.wind?.speed?.toString() ?: "--"
-    val pressure = response.list?.firstOrNull()?.main?.pressure?.toString() ?: "--"
+fun WeatherScreen(apiResponse: ApiResponse) {
+    val cityName = apiResponse.city?.name ?: "Unknown"
+    val country = apiResponse.city?.country ?: ""
+    val temperature = apiResponse.list?.firstOrNull()?.main?.temp?.toString() ?: "--"
+    val description = apiResponse.list?.firstOrNull()?.weather?.firstOrNull()?.description ?: "Unknown"
+    val humidity = apiResponse.list?.firstOrNull()?.main?.humidity?.toString() ?: "--"
+    val windSpeed = apiResponse.list?.firstOrNull()?.wind?.speed?.toString() ?: "--"
+    val pressure = apiResponse.list?.firstOrNull()?.main?.pressure?.toString() ?: "--"
 
 
     Box(
@@ -103,7 +104,7 @@ fun WeatherScreen(response: Response) {
             Text(text = "Hourly Forecast", fontSize = 20.sp)
 
             LazyRow(modifier = Modifier.fillMaxWidth()) {
-                items(response.list ?: emptyList()) { item ->
+                items(apiResponse.list ?: emptyList()) { item ->
                     HourlyWeatherItem(item?.dtTxt ?: "--", "${item?.main?.temp ?: "--"}°C")
                 }
             }
@@ -148,5 +149,32 @@ fun getWeatherIcon(description: String): Painter {
         description.contains("rain", ignoreCase = true) -> painterResource(id = R.drawable.weather_ic)
         description.contains("sun", ignoreCase = true) -> painterResource(id = R.drawable.weather_ic)
         else -> painterResource(id = R.drawable.weather_ic) // Default icon
+    }
+}
+
+@Composable
+fun EmptyScreen() {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = "No weather data available",
+            style = MaterialTheme.typography.bodyLarge
+        )
+    }
+}
+
+@Composable
+fun ErrorScreen(message: String?) {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = message ?: "An error occurred",
+            color = MaterialTheme.colorScheme.error,
+            style = MaterialTheme.typography.bodyLarge
+        )
     }
 }

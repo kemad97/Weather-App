@@ -22,7 +22,7 @@ class LocationViewModel(context: Context) : ViewModel() {
 
     @SuppressLint("MissingPermission")
     private fun getLocationUpdates() {
-        val locRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 10000)
+        val locRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 300000)
             .build()
         val locCallback = object : LocationCallback(){
             override fun onLocationResult(locationResult: LocationResult) {

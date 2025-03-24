@@ -8,8 +8,10 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import androidx.lifecycle.ViewModelProvider
+import com.example.weatherapp.BuildConfig
+import com.example.weatherapp.ResultState
 import com.example.weatherapp.data.WeatherRepository
-import com.example.weatherapp.model.Response
+import com.example.weatherapp.model.ApiResponse
 import kotlinx.coroutines.flow.collectLatest
 
 import kotlinx.coroutines.launch
@@ -17,13 +19,14 @@ import kotlinx.coroutines.launch
 class WeatherViewModel (private val repository: WeatherRepository,    private val locationViewModel: LocationViewModel
 ) : ViewModel() {
 
-    private val _weatherData = MutableStateFlow<Response?>(null)
-    val weatherData: StateFlow<Response?> = _weatherData
+    /*private val _weatherData = MutableStateFlow<ApiResponse?>(null)
+    val weatherData: StateFlow<ApiResponse?> = _weatherData
+    */
+    private val _weatherData= MutableStateFlow<ResultState <ApiResponse>>(ResultState.Empty)
+    val weatherData : StateFlow<ResultState<ApiResponse>> = _weatherData
 
     init {
-        //fetchWeather()
         observeLocationAndFetchWeather()
-
     }
 
      fun observeLocationAndFetchWeather() {
@@ -39,18 +42,18 @@ class WeatherViewModel (private val repository: WeatherRepository,    private va
     private fun fetchWeather(lat: Double, lon: Double) {
         viewModelScope.launch {
             try {
-              //  val lat = 30.0444
-            //    val lon = 31.2357
-                val apiKey = "557286fc08f4438364702631194d8280"
+                _weatherData.value=ResultState.Loading
+                val apiKey = BuildConfig.WEATHER_API_KEY
 
                 repository.fetchWeather(lat, lon, apiKey).collectLatest {
                     response ->
-                    _weatherData.value = response
+                    _weatherData.value = ResultState.Success(response)
                     Log.d("WeatherData", "Received: $response + ${response.city?.name}")
 
                 }
             } catch (e: Exception) {
                 Log.e("API_ERROR", "Failed to fetch weather data: ${e.message}")
+                _weatherData.value=ResultState.Error(e)
             }
         }
     }

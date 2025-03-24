@@ -1,13 +1,13 @@
 package com.example.weatherapp.data
 
-import com.example.weatherapp.model.Response
+import com.example.weatherapp.model.ApiResponse
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 class WeatherRepository  {
     private val remoteRepository: RemoteRepository = RemoteRepositoryImpl(WeatherApi.retrofitService)
 
-    fun fetchWeather(lat: Double, lon: Double, apiKey: String): Flow<Response> = flow {
+    fun fetchWeather(lat: Double, lon: Double, apiKey: String): Flow<ApiResponse> = flow {
         val response = remoteRepository.getWeatherForecast(lat, lon, apiKey)
         emit(response)
     }

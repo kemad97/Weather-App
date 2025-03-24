@@ -2,7 +2,7 @@ package com.example.weatherapp.model
 
 import com.google.gson.annotations.SerializedName
 
-data class Response(
+data class ApiResponse(
 
     @field:SerializedName("city")
 	val city: City? = null,

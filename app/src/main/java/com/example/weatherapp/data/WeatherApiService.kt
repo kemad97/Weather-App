@@ -1,6 +1,6 @@
 package com.example.weatherapp.data
 
-import com.example.weatherapp.model.Response
+import com.example.weatherapp.model.ApiResponse
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
@@ -15,7 +15,7 @@ interface WeatherApiService {
         @Query("lon") lon: Double,
         @Query("appid") apiKey: String,
         @Query("units") units: String = "metric" // in Celsius
-    ): Response
+    ): ApiResponse
 
 
     @GET("forecast") //fetches the 5-day forecast
@@ -24,7 +24,7 @@ interface WeatherApiService {
         @Query("lon") lon: Double,
         @Query("appid") apiKey: String,
         @Query("units") units: String = "metric" // in Celsius
-    ): Response
+    ): ApiResponse
 
 
 }
