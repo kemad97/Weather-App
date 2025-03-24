@@ -21,7 +21,7 @@ class MainActivity : ComponentActivity() {
             WeatherViewModelFactory(repository, locationViewModel)
         )[WeatherViewModel::class.java]
         setContent {
-                HomeScreen(viewModel)
+            MainScreen(viewModel)
         }
 
         }
