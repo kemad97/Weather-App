@@ -25,14 +25,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.weatherapp.viewmodel.LocationViewModel
+import com.example.weatherapp.ui.screens.HomeScreen
 import com.example.weatherapp.viewmodel.WeatherViewModel
 
 sealed class Screen(
@@ -52,7 +51,7 @@ fun MainScreen (viewModel: WeatherViewModel)
 {
     val navController = rememberNavController()
     val context = LocalContext.current
-    val isLocationEnabled by LocationViewModel(context).isLocationEnabled.collectAsState()
+    val isLocationEnabled by LocationTracker(context).isLocationEnabled.collectAsState()
     var showDialog by remember { mutableStateOf(true) }
 
 

@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import androidx.lifecycle.ViewModelProvider
 import com.example.weatherapp.BuildConfig
+import com.example.weatherapp.LocationTracker
 import com.example.weatherapp.ResultState
 import com.example.weatherapp.data.WeatherRepository
 import com.example.weatherapp.model.ApiResponse
@@ -16,14 +17,14 @@ import kotlinx.coroutines.flow.collectLatest
 
 import kotlinx.coroutines.launch
 
-class WeatherViewModel (private val repository: WeatherRepository,    private val locationViewModel: LocationViewModel
+class WeatherViewModel (private val repository: WeatherRepository, private val locationTracker: LocationTracker
+
 ) : ViewModel() {
 
-    /*private val _weatherData = MutableStateFlow<ApiResponse?>(null)
-    val weatherData: StateFlow<ApiResponse?> = _weatherData
-    */
     private val _weatherData= MutableStateFlow<ResultState <ApiResponse>>(ResultState.Empty)
     val weatherData : StateFlow<ResultState<ApiResponse>> = _weatherData
+    val isLocationEnabled = locationTracker.isLocationEnabled
+
 
     init {
         observeLocationAndFetchWeather()
@@ -31,7 +32,7 @@ class WeatherViewModel (private val repository: WeatherRepository,    private va
 
      fun observeLocationAndFetchWeather() {
         viewModelScope.launch {
-            locationViewModel.myLocation.collect { location ->
+            locationTracker.myLocation.collect { location ->
                 location?.let { (lat, lon) ->
                     fetchWeather(lat, lon)
                 }
@@ -62,11 +63,11 @@ class WeatherViewModel (private val repository: WeatherRepository,    private va
 
 
 class WeatherViewModelFactory(private val repository: WeatherRepository ,
-                              private val locationViewModel: LocationViewModel
+                              private val locationTracker: LocationTracker
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(WeatherViewModel::class.java)) {
-            return WeatherViewModel(repository, locationViewModel) as T
+            return WeatherViewModel(repository, locationTracker) as T
         }
         throw IllegalArgumentException("err WeatherViewModelFactory class")
     }

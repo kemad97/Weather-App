@@ -1,6 +1,6 @@
 @file:Suppress("PreviewAnnotationInFunctionWithParameters")
 
-package com.example.weatherapp
+package com.example.weatherapp.ui.screens
 
 import android.icu.text.SimpleDateFormat
 import androidx.compose.foundation.Image
@@ -23,6 +23,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.decode.GifDecoder
 import coil.request.ImageRequest
+import com.example.weatherapp.R
+import com.example.weatherapp.ResultState
 import com.example.weatherapp.model.ApiResponse
 import com.example.weatherapp.model.ListItem
 import com.example.weatherapp.viewmodel.WeatherViewModel
