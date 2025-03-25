@@ -23,6 +23,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.decode.GifDecoder
 import coil.request.ImageRequest
+import com.example.weatherapp.LocationTracker
 import com.example.weatherapp.R
 import com.example.weatherapp.ResultState
 import com.example.weatherapp.model.ApiResponse
@@ -238,19 +239,27 @@ private fun formatTime(dateStr: String): String {
 
 @Composable
 fun EmptyScreen() {
+    val context = LocalContext.current
+
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        Text(
-            text = "No weather data available",
-            style = MaterialTheme.typography.bodyLarge
-        )
+
+        Spacer(modifier = Modifier.height(16.dp).padding(16.dp))
+        Button(onClick = {
+            LocationTracker.getInstance(context).checkLocationSettings()
+
+        }) {
+            Text("Refresh")
+        }
     }
 }
 
 @Composable
 fun ErrorScreen(message: String?) {
+    val context = LocalContext.current
+
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -260,5 +269,11 @@ fun ErrorScreen(message: String?) {
             color = MaterialTheme.colorScheme.error,
             style = MaterialTheme.typography.bodyLarge
         )
+        Button(onClick = {
+            LocationTracker.getInstance(context).checkLocationSettings()
+
+        }) {
+            Text("Refresh")
+        }
     }
 }

@@ -31,7 +31,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.weatherapp.ui.screens.AlertsScreen
+import com.example.weatherapp.ui.screens.FavoritesScreen
 import com.example.weatherapp.ui.screens.HomeScreen
+import com.example.weatherapp.ui.screens.SettingsScreen
 import com.example.weatherapp.viewmodel.WeatherViewModel
 
 sealed class Screen(
@@ -146,32 +149,7 @@ fun MainScreen (viewModel: WeatherViewModel)
     }
 }
 
-@Composable
-fun FavoritesScreen() {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Text("Favorites Screen")
-    }
-}
 
-@Composable
-fun AlertsScreen() {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Text("Alerts Screen")
-    }
-}
 
-@Composable
-fun SettingsScreen() {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Text("Settings Screen")
-    }
-}
+
+
