@@ -25,16 +25,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.weatherapp.data.WeatherRepository
 import com.example.weatherapp.ui.screens.AlertsScreen
 import com.example.weatherapp.ui.screens.FavoritesScreen
 import com.example.weatherapp.ui.screens.HomeScreen
+import com.example.weatherapp.ui.screens.MapScreen
 import com.example.weatherapp.ui.screens.SettingsScreen
+import com.example.weatherapp.viewmodel.FavoriteViewModel
+import com.example.weatherapp.viewmodel.FavoriteViewModelFactory
 import com.example.weatherapp.viewmodel.WeatherViewModel
 
 sealed class Screen(
@@ -46,11 +51,17 @@ sealed class Screen(
     data object Favorites : Screen("favorites", R.drawable.ic_fav, "Favorites")
     data object Alerts : Screen("alerts", R.drawable.ic_alerts, "Alerts")
     data object Settings : Screen("settings", R.drawable.ic_settings, "Settings")
+    data object Map : Screen("map", 0, "")
+
+    data object FavoriteDetail : Screen("favorite_detail/{lat}/{lon}", 0, "") {
+        fun createRoute(lat: Double, lon: Double) = "favorite_detail/$lat/$lon"
+    }
+
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen (viewModel: WeatherViewModel)
+fun MainScreen(weatherViewModel: WeatherViewModel, repository: WeatherRepository)
 {
     val navController = rememberNavController()
     val context = LocalContext.current
@@ -134,17 +145,40 @@ fun MainScreen (viewModel: WeatherViewModel)
             modifier = Modifier.padding(paddingValues)
         ) {
             composable(Screen.Home.route) {
-                HomeScreen(viewModel)
+                HomeScreen(weatherViewModel)
             }
             composable(Screen.Favorites.route) {
-                FavoritesScreen()
+                val favoriteViewModel = viewModel<FavoriteViewModel>(
+                    factory = FavoriteViewModelFactory(repository)
+                )
+                FavoritesScreen(
+                    viewModel = favoriteViewModel,
+                    onNavigateToMap = { navController.navigate(Screen.Map.route) }
+                )
+
+
             }
+
+            composable(Screen.Map.route) {
+                val favoriteViewModel = viewModel<FavoriteViewModel>(
+                    factory = FavoriteViewModelFactory(repository)
+                )
+                MapScreen(
+                    viewModel = favoriteViewModel,
+                    onNavigateBack = { navController.navigateUp() }
+                )
+            }
+
+
             composable(Screen.Alerts.route) {
                 AlertsScreen()
             }
             composable(Screen.Settings.route) {
                 SettingsScreen()
             }
+
+
+
         }
     }
 }
