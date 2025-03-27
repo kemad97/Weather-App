@@ -21,7 +21,8 @@ import com.example.weatherapp.viewmodel.FavoriteViewModel
 @Composable
 fun FavoritesScreen(
     viewModel: FavoriteViewModel,
-    onNavigateToMap: () -> Unit
+    onNavigateToMap: () -> Unit,
+    onNavigateToDetail: (Double, Double) -> Unit
 ) {
     val favorites by viewModel.favorites.collectAsState()
     val selectedWeather by viewModel.selectedWeather.collectAsState()
@@ -52,9 +53,7 @@ fun FavoritesScreen(
                         FavoriteItem(
                             favorite = favorite,
                             onDelete = { viewModel.removeFavorite(favorite) },
-                            onClick = {
-                                viewModel.getWeatherForLocation(favorite.lat, favorite.lon)
-                            }
+                            onClick = { onNavigateToDetail(favorite.lat, favorite.lon) }
                         )
                     }
                 }
