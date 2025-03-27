@@ -32,6 +32,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import androidx.navigation.toRoute
 import com.example.weatherapp.data.WeatherRepository
 import com.example.weatherapp.ui.screens.AlertsScreen
 import com.example.weatherapp.ui.screens.FavoritesScreen
