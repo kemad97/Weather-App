@@ -5,6 +5,7 @@ package com.example.weatherapp.ui.screens
 import android.icu.text.SimpleDateFormat
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
@@ -102,6 +103,8 @@ fun WeatherScreen(apiResponse: ApiResponse) {
                 WeatherDetailItem("Pressure", "$pressure hPa")
             }
 
+            // hourly forecase
+
             Spacer(modifier = Modifier.height(20.dp))
             Text(text = "Hourly Forecast", fontSize = 20.sp)
             LazyRow(
@@ -119,12 +122,18 @@ fun WeatherScreen(apiResponse: ApiResponse) {
 
             // 7 day forecase
             Spacer(modifier = Modifier.height(20.dp))
-            Text(text = "7-Day Forecast", fontSize = 20.sp)
-            LazyRow  (
+            Text(
+                text = "7-Day Forecast",
+                fontSize = 20.sp,
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier.padding(horizontal = 16.dp)
+            )
+            LazyColumn  (
                 modifier = Modifier
                     .fillMaxWidth()
-                    .align(Alignment.CenterHorizontally)
-                    .padding(vertical = 8.dp)
+                    .fillMaxSize()
+                    .padding(vertical = 8.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 val dailyForecasts = apiResponse.list
                     ?.filterNotNull()
@@ -145,35 +154,48 @@ fun WeatherScreen(apiResponse: ApiResponse) {
 fun DailyForecastItem(forecast: ListItem) {
     Card(
         modifier = Modifier
-            .padding(8.dp)
-            .width(120.dp)
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp, vertical = 4.dp),
     ) {
-        Column(
-            modifier = Modifier.padding(8.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(20.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
+            // Date
             Text(
                 text = formatDate(forecast.dtTxt ?: ""),
-                fontSize = 14.sp,
-                textAlign = TextAlign.Center
+                style = MaterialTheme.typography.titleMedium
             )
-            Spacer(modifier = Modifier.height(4.dp))
-            Image(
-                painter = getWeatherIcon(forecast.weather?.firstOrNull()?.description ?: ""),
-                contentDescription = "Weather Icon",
-                modifier = Modifier.size(40.dp)
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(text = "${forecast.main?.temp ?: "--"}°C", fontSize = 16.sp)
+
+            // Weather icon and description
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Image(
+                    painter = getWeatherIcon(forecast.weather?.firstOrNull()?.description ?: ""),
+                    contentDescription = "Weather Icon",
+                    modifier = Modifier.size(32.dp)
+                )
+                Text(
+                    text = forecast.weather?.firstOrNull()?.description?.capitalize() ?: "",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+
+            // Temperature
             Text(
-                text = forecast.weather?.firstOrNull()?.description ?: "",
-                fontSize = 12.sp,
-                textAlign = TextAlign.Center,
-                maxLines = 1
+                text = "${forecast.main?.temp?.toString()}°C",
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.primary
             )
         }
     }
 }
+
 
 @Composable
 fun WeatherDetailItem(title: String, value: String) {
@@ -184,12 +206,25 @@ fun WeatherDetailItem(title: String, value: String) {
 }
 
 @Composable
+fun getWeatherIconByTemp(temp: String): Painter {
+    val temperature = temp.replace("°C", "").toFloatOrNull() ?: 0f
+    return when {
+        temperature >= 30 -> painterResource(id = R.drawable.ic_sunny)
+        temperature >= 20 -> painterResource(id = R.drawable.weather_ic)
+        temperature >= 10 -> painterResource(id = R.drawable.ic_haze)
+        temperature >= 0 -> painterResource(id = R.drawable.ic_snow)
+        else -> painterResource(id = R.drawable.weather_ic)
+    }
+}
+
+@Composable
 fun HourlyWeatherItem(time: String, temp: String) {
-    Card(modifier = Modifier.padding(8.dp)) {
+    Card(modifier = Modifier.padding(8.dp) ,
+        ) {
         Column(modifier = Modifier.padding(8.dp), horizontalAlignment = Alignment.CenterHorizontally) {
             Text(text = time, fontSize = 14.sp)
             Image(
-                painter = painterResource(id = R.drawable.weather_ic),
+                painter = getWeatherIconByTemp(temp) ,
                 contentDescription = "Weather Icon",
                 modifier = Modifier.size(40.dp)
             )
@@ -209,11 +244,17 @@ fun LoadingScreen() {
 fun getWeatherIcon(description: String): Painter {
     return when {
         description.contains("cloud", ignoreCase = true) -> painterResource(id = R.drawable.weather_ic)
-        description.contains("rain", ignoreCase = true) -> painterResource(id = R.drawable.weather_ic)
-        description.contains("sun", ignoreCase = true) -> painterResource(id = R.drawable.weather_ic)
+        description.contains("rain", ignoreCase = true) -> painterResource(id = R.drawable.ic_rain)
+        description.contains("sun" , ignoreCase = true) -> painterResource(id = R.drawable.ic_sunny)
+        description.contains("clear" , ignoreCase = true) -> painterResource(id = R.drawable.ic_sunny)
+
+        description.contains("snow", ignoreCase = true) -> painterResource(id = R.drawable.ic_snow)
+
         else -> painterResource(id = R.drawable.weather_ic)
     }
 }
+
+
 
 private fun formatDate(dateStr: String): String {
     return try {
