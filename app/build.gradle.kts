@@ -104,4 +104,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
 
     implementation("org.osmdroid:osmdroid-android:6.1.10")
+    implementation ("com.airbnb.android:lottie-compose:6.3.0")
+
+
 }
