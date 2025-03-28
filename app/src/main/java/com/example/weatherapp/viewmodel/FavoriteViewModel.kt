@@ -1,5 +1,6 @@
 package com.example.weatherapp.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -11,6 +12,8 @@ import com.example.weatherapp.data.local.FavoriteEntity
 import com.example.weatherapp.model.ApiResponse
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class FavoriteViewModel(private val repository: WeatherRepository) : ViewModel() {
@@ -50,10 +53,17 @@ class FavoriteViewModel(private val repository: WeatherRepository) : ViewModel()
         viewModelScope.launch {
             _selectedWeather.value = ResultState.Loading
             try {
-                repository.fetchWeather(lat, lon, BuildConfig.WEATHER_API_KEY).collect {
-                    _selectedWeather.value = ResultState.Success(it)
-                }
+                repository.fetchWeather(lat, lon, BuildConfig.WEATHER_API_KEY)
+                    .catch { e ->
+                        Log.e("FavoriteViewModel", "Error fetching weather: ${e.message}")
+                        _selectedWeather.value = ResultState.Error(e)
+                    }
+                    .collectLatest { response ->
+                        Log.d("FavoriteViewModel", "Received weather data: $response")
+                        _selectedWeather.value = ResultState.Success(response)
+                    }
             } catch (e: Exception) {
+                Log.e("FavoriteViewModel", "Exception in getWeatherForLocation: ${e.message}")
                 _selectedWeather.value = ResultState.Error(e)
             }
         }

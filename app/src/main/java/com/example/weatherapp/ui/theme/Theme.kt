@@ -135,7 +135,7 @@ fun WeatherAppTheme(
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             Image(
-                painter = painterResource(id = R.drawable.bk_sunny),
+                painter = painterResource(id = R.drawable.beautifulmountains),
                 contentDescription = "Background",
                 contentScale = ContentScale.FillBounds,
                 modifier = Modifier.fillMaxSize()

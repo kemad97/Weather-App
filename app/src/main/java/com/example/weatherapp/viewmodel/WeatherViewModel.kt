@@ -27,6 +27,8 @@ class WeatherViewModel (private val repository: WeatherRepository, private val l
 
 
     init {
+        _weatherData.value = ResultState.Loading
+
         observeLocationAndFetchWeather()
     }
 
@@ -43,12 +45,13 @@ class WeatherViewModel (private val repository: WeatherRepository, private val l
     private fun fetchWeather(lat: Double, lon: Double) {
         viewModelScope.launch {
             try {
+
                 _weatherData.value=ResultState.Loading
                 val apiKey = BuildConfig.WEATHER_API_KEY
 
-                repository.fetchWeather(lat, lon, apiKey).collectLatest {
-                    response ->
+                repository.fetchWeather(lat, lon, apiKey).collectLatest { response ->
                     _weatherData.value = ResultState.Success(response)
+                    Log.d("WeatherData", " API Response: $response")
                     Log.d("WeatherData", "Received: $response + ${response.city?.name}")
 
                 }

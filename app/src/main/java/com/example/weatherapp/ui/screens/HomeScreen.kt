@@ -62,16 +62,15 @@ fun WeatherScreen(apiResponse: ApiResponse) {
     val windSpeed = apiResponse.list?.firstOrNull()?.wind?.speed?.toString() ?: "--"
     val pressure = apiResponse.list?.firstOrNull()?.main?.pressure?.toString() ?: "--"
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(modifier = Modifier.fillMaxSize()
+        .systemBarsPadding()
+    ) {
         AsyncImage(
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(R.drawable.sunnyg)
-                .crossfade(true)
-                .decoderFactory(GifDecoder.Factory())
-                .build(),
-            contentDescription = "Animated Background",
-            contentScale = ContentScale.Crop,
-            modifier = Modifier.fillMaxSize()
+        //    model = getWeatherBackground(description),
+            model=R.drawable.beautifulmountains,
+            contentDescription = "Weather Background",
+            contentScale = ContentScale.FillBounds,
+            modifier = Modifier.fillMaxSize().fillMaxHeight().fillMaxWidth()
         )
 
         Column(
@@ -205,6 +204,19 @@ fun WeatherDetailItem(title: String, value: String) {
     }
 }
 
+//@Composable
+//fun getWeatherBackground(description: String): Int {
+//    return when {
+//        description.contains("cloud", ignoreCase = true) -> R.drawable.cloudy
+//        description.contains("rain", ignoreCase = true) -> R.drawable.bk_rain
+//        description.contains("snow", ignoreCase = true) -> R.drawable.bk_snow
+//        description.contains("sun", ignoreCase = true) -> R.drawable.beautifulmountains
+//        description.contains("clear", ignoreCase = true) -> R.drawable.sunnyg
+//        else -> R.drawable.sunnyg
+//    }
+//}
+
+
 @Composable
 fun getWeatherIconByTemp(temp: String): Painter {
     val temperature = temp.replace("°C", "").toFloatOrNull() ?: 0f
@@ -289,7 +301,7 @@ fun EmptyScreen() {
 
         Spacer(modifier = Modifier.height(16.dp).padding(16.dp))
         Button(onClick = {
-            LocationTracker.getInstance(context).checkLocationSettings()
+            LocationTracker.getInstance(context).getLocationUpdates()
 
         }) {
             Text("Refresh")
@@ -311,7 +323,7 @@ fun ErrorScreen(message: String?) {
             style = MaterialTheme.typography.bodyLarge
         )
         Button(onClick = {
-            LocationTracker.getInstance(context).checkLocationSettings()
+            LocationTracker.getInstance(context).getLocationUpdates()
 
         }) {
             Text("Refresh")

@@ -45,7 +45,7 @@ import com.example.weatherapp.viewmodel.WeatherViewModel
 
 sealed class Screen(
     val route: String,
-    val icon: Int,
+    var icon: Int,
     val label: String
 ) {
     data object Home : Screen("home",R.drawable.ic_home, "Home")

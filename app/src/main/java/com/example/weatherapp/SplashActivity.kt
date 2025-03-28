@@ -14,6 +14,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.airbnb.lottie.compose.LottieAnimation
@@ -48,14 +49,23 @@ fun SplashScreen(onSplashComplete: () -> Unit) {
     )
 
     Box(
-        modifier = Modifier.fillMaxSize()
-            .background(Color(0xFF2784DB)) ,
+        modifier = Modifier.
+        fillMaxSize()
+            .background(
+                brush = Brush.verticalGradient(
+                    colors = listOf(
+                        Color(0xFF1B4DE4),
+                        Color(0xFF2784DB),
+                        Color(0xFF42A5F5)
+                    )
+                )
+            ) ,
         contentAlignment = Alignment.Center
     ) {
         LottieAnimation(
             composition = composition,
             progress = { progress },
-            modifier = Modifier.size(300.dp)
+            modifier = Modifier.size(500.dp)
         )
     }
 

@@ -105,15 +105,19 @@ fun FavoriteDetailScreen(
 
 @Composable
 fun WeatherDetailContent(apiResponse: ApiResponse) {
+    val cityName = apiResponse.city?.name ?: "Unknown"
+    val country = apiResponse.city?.country ?: ""
+    val temperature = apiResponse.list?.firstOrNull()?.main?.temp?.toString() ?: "--"
+    val description = apiResponse.list?.firstOrNull()?.weather?.firstOrNull()?.description ?: "Unknown"
+    val humidity = apiResponse.list?.firstOrNull()?.main?.humidity?.toString() ?: "--"
+    val windSpeed = apiResponse.list?.firstOrNull()?.wind?.speed?.toString() ?: "--"
+    val pressure = apiResponse.list?.firstOrNull()?.main?.pressure?.toString() ?: "--"
+
     Box(modifier = Modifier.fillMaxSize()) {
         AsyncImage(
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(R.drawable.sunnyg)
-                .crossfade(true)
-                .decoderFactory(GifDecoder.Factory())
-                .build(),
-            contentDescription = "Animated Background",
-            contentScale = ContentScale.Crop,
+            model=R.drawable.beautifulmountains,
+            contentDescription = "Weather Background",
+            contentScale = ContentScale.FillBounds,
             modifier = Modifier.fillMaxSize()
         )
 
@@ -123,7 +127,7 @@ fun WeatherDetailContent(apiResponse: ApiResponse) {
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Header Section
+            // Header
             Text(
                 text = "${apiResponse.city?.name}, ${apiResponse.city?.country}",
                 fontSize = 24.sp,
@@ -140,11 +144,15 @@ fun WeatherDetailContent(apiResponse: ApiResponse) {
             )
 
             Text(
-                text = "${currentWeather?.main?.temp}°C",
+                text = "${currentWeather?.main?.temp?.let { "%.1f".format(it) }}°C",
                 fontSize = 64.sp
             )
             Text(
-                text = currentWeather?.weather?.firstOrNull()?.description?.capitalize() ?: "",
+                text = currentWeather?.weather?.firstOrNull()?.description?.replaceFirstChar {
+                    if (it.isLowerCase()) it.titlecase(
+                        Locale.getDefault()
+                    ) else it.toString()
+                } ?: "",
                 fontSize = 18.sp
             )
 
@@ -170,7 +178,7 @@ fun WeatherDetailContent(apiResponse: ApiResponse) {
                 items(apiResponse.list?.take(8) ?: emptyList()) { item ->
                     HourlyWeatherItem(
                         time = formatTime(item?.dtTxt ?: ""),
-                        temp = "${item?.main?.temp}°C"
+                        temp = "${item?.main?.temp?.let { "%.1f".format(it) }}°C"
                     )
                 }
             }
@@ -216,3 +224,4 @@ private fun formatTime(dateStr: String): String {
         dateStr
     }
 }
+

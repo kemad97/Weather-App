@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.*
@@ -17,6 +18,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import com.example.weatherapp.R
+import com.example.weatherapp.Screen.Alerts.icon
 import com.example.weatherapp.viewmodel.FavoriteViewModel
 import org.osmdroid.config.Configuration
 import org.osmdroid.events.MapEventsReceiver
@@ -52,7 +55,7 @@ fun MapScreen(
                 title = { Text("Add Favorite Location") },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back")
                     }
                 }
             )
@@ -118,15 +121,18 @@ fun MapViewContainer(
                 setTileSource(TileSourceFactory.MAPNIK)
                 setMultiTouchControls(true)
                 controller.setZoom(5.0)
-                controller.setCenter(GeoPoint(30.0, 31.0)) // Default center (Egypt)
+                controller.setCenter(GeoPoint(30.0, 31.0)) // Default
 
                 // Add map click listener
                 val mapEventsOverlay = MapEventsOverlay(object : MapEventsReceiver {
                     override fun singleTapConfirmedHelper(p: GeoPoint): Boolean {
                         overlays.removeAll { it is Marker }
-                        val marker = Marker(this@apply)
-                        marker.position = p
-                        marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
+                        val marker = Marker(this@apply).apply {
+                            position = p
+                            setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+                            icon = context.resources.getDrawable(R.drawable.ic_location, null)
+                            title = "Selected Location"
+                        }
                         overlays.add(marker)
                         onLocationSelected(p)
                         invalidate()

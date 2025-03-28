@@ -125,7 +125,7 @@ data class ListItem(
 	val dt: Int? = null,
 
     @field:SerializedName("pop")
-	val pop: Int? = null,
+	val pop: Double? = null,
 
     @field:SerializedName("visibility")
 	val visibility: Int? = null,
