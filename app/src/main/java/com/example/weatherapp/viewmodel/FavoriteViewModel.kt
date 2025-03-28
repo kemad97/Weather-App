@@ -5,10 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.weatherapp.BuildConfig
-import com.example.weatherapp.LocationTracker
 import com.example.weatherapp.ResultState
 import com.example.weatherapp.data.WeatherRepository
-import com.example.weatherapp.data.local.FavoriteEntity
+import com.example.weatherapp.data.local.FavoriteWeather
 import com.example.weatherapp.model.ApiResponse
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,8 +16,8 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class FavoriteViewModel(private val repository: WeatherRepository) : ViewModel() {
-    private val _favorites = MutableStateFlow<List<FavoriteEntity>>(emptyList())
-    val favorites: StateFlow<List<FavoriteEntity>> = _favorites
+    private val _favorites = MutableStateFlow<List<FavoriteWeather>>(emptyList())
+    val favorites: StateFlow<List<FavoriteWeather>> = _favorites
 
     private val _selectedWeather = MutableStateFlow<ResultState<ApiResponse>>(ResultState.Empty)
     val selectedWeather: StateFlow<ResultState<ApiResponse>> = _selectedWeather
@@ -38,12 +37,12 @@ class FavoriteViewModel(private val repository: WeatherRepository) : ViewModel()
 
     fun addFavorite(cityName: String, lat: Double, lon: Double) {
         viewModelScope.launch {
-            val favorite = FavoriteEntity(cityName = cityName, lat = lat, lon = lon)
+            val favorite = FavoriteWeather(cityName = cityName, lat = lat, lon = lon)
             repository.insertFavorite(favorite)
         }
     }
 
-    fun removeFavorite(favorite: FavoriteEntity) {
+    fun removeFavorite(favorite: FavoriteWeather) {
         viewModelScope.launch {
             repository.deleteFavorite(favorite)
         }
