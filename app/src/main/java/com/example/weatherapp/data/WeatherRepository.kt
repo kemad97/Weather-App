@@ -1,8 +1,8 @@
 package com.example.weatherapp.data
 
-import com.example.weatherapp.data.local.FavoriteWeather
+import com.example.weatherapp.data.local.FavoriteEntity
 import com.example.weatherapp.data.local.LocalDataSource
-import com.example.weatherapp.data.local.WeatherAlert
+import com.example.weatherapp.data.local.AlertEntity
 import com.example.weatherapp.data.remote.RemoteRepository
 import com.example.weatherapp.data.remote.RemoteRepositoryImpl
 import com.example.weatherapp.data.remote.WeatherApi
@@ -21,28 +21,28 @@ class WeatherRepository(
         emit(response)
     }
 
-    fun getAllFavorites(): Flow<List<FavoriteWeather>> {
+    fun getAllFavorites(): Flow<List<FavoriteEntity>> {
         return localDataSource.getAllFavorites()
     }
 
-    suspend fun insertFavorite(favorite: FavoriteWeather) {
+    suspend fun insertFavorite(favorite: FavoriteEntity) {
         localDataSource.insertFavorite(favorite)
     }
 
-    suspend fun deleteFavorite(favorite: FavoriteWeather) {
+    suspend fun deleteFavorite(favorite: FavoriteEntity) {
         localDataSource.deleteFavorite(favorite)
     }
 
 
-    fun getAllAlerts(): Flow<List<WeatherAlert>> {
+    fun getAllAlerts(): Flow<List<AlertEntity>> {
         return localDataSource.getAllAlerts()
     }
 
-    suspend fun insertAlert(alert: WeatherAlert) {
+    suspend fun insertAlert(alert: AlertEntity) {
         localDataSource.insertAlert(alert)
     }
 
-    suspend fun deleteAlert(alert: WeatherAlert) {
+    suspend fun deleteAlert(alert: AlertEntity) {
         localDataSource.deleteAlert(alert)
     }
 

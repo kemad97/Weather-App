@@ -17,7 +17,7 @@ class MainActivity : ComponentActivity() {
 
 
         val database = WeatherDatabase.getInstance(applicationContext)
-        val localDataSource = LocalDataSourceImpl(database.favoriteDao())
+        val localDataSource = LocalDataSourceImpl(database.favoritesAndAlertsDao())
         val repository = WeatherRepository.getInstance(localDataSource)
         val locationTracker = LocationTracker.getInstance(this)
         val viewModel = ViewModelProvider(

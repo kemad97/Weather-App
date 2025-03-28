@@ -12,7 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.weatherapp.ResultState
-import com.example.weatherapp.data.local.FavoriteWeather
+import com.example.weatherapp.data.local.FavoriteEntity
 import com.example.weatherapp.viewmodel.FavoriteViewModel
 
 
@@ -77,7 +77,7 @@ fun FavoritesScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FavoriteItem(
-    favorite: FavoriteWeather,
+    favorite: FavoriteEntity,
     onDelete: () -> Unit,
     onClick: () -> Unit
 ) {

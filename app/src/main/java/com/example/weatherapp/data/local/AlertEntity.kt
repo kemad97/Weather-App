@@ -1,7 +1,13 @@
 package com.example.weatherapp.data.local
 
-data class WeatherAlert(
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity(tableName = "alerts_table")
+data class AlertEntity(
+    @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
+    val title:String,
     val startTime: Long,
     val endTime: Long,
     val type: AlertType,

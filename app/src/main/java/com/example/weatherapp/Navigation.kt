@@ -39,6 +39,7 @@ import com.example.weatherapp.ui.screens.FavoritesScreen
 import com.example.weatherapp.ui.screens.HomeScreen
 import com.example.weatherapp.ui.screens.MapScreen
 import com.example.weatherapp.ui.screens.SettingsScreen
+import com.example.weatherapp.viewmodel.AlertsViewModel
 import com.example.weatherapp.viewmodel.FavoriteViewModel
 import com.example.weatherapp.viewmodel.FavoriteViewModelFactory
 import com.example.weatherapp.viewmodel.WeatherViewModel
@@ -192,7 +193,10 @@ fun MainScreen(weatherViewModel: WeatherViewModel, repository: WeatherRepository
             }
 
             composable(Screen.Alerts.route) {
-                AlertsScreen()
+                val alertsViewModel = viewModel<AlertsViewModel>(
+                    factory = AlertsViewModel.AlertsViewModelFactory(repository)
+                )
+                AlertsScreen(viewModel = alertsViewModel)
             }
             composable(Screen.Settings.route) {
                 SettingsScreen()

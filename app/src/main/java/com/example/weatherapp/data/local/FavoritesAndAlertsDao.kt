@@ -11,21 +11,21 @@ import kotlinx.coroutines.flow.Flow
 interface FavoritesAndAlertsDao {
 
     @Query("SELECT * FROM favorties_table")
-    fun getAllFavorites(): Flow<List<FavoriteWeather>>
+    fun getAllFavorites(): Flow<List<FavoriteEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertFavorite(favorite: FavoriteWeather)
+    suspend fun insertFavorite(favorite: FavoriteEntity)
 
     @Delete
-    suspend fun deleteFavorite(favorite: FavoriteWeather)
+    suspend fun deleteFavorite(favorite: FavoriteEntity)
 
 
     @Query("SELECT * FROM alerts_table")
-    fun getAllAlerts(): Flow<List<WeatherAlert>>
+    fun getAllAlerts(): Flow<List<AlertEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAlert(alert: WeatherAlert)
+    suspend fun insertAlert(alert: AlertEntity)
 
     @Delete
-    suspend fun deleteAlert(alert: WeatherAlert)
+    suspend fun deleteAlert(alert: AlertEntity)
 }
