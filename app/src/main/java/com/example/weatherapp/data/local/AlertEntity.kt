@@ -9,7 +9,6 @@ data class AlertEntity(
     val id: Int = 0,
     val title:String,
     val startTime: Long,
-    val endTime: Long,
     val type: AlertType,
     val isEnabled: Boolean = true
 )

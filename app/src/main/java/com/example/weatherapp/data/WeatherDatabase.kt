@@ -13,7 +13,7 @@ import com.example.weatherapp.data.local.FavoritesAndAlertsDao
         FavoriteEntity::class,
         AlertEntity::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class WeatherDatabase : RoomDatabase() {

@@ -26,12 +26,11 @@ class AlertsViewModel(private val repository: WeatherRepository) : ViewModel() {
         }
     }
 
-    fun addAlert(startTime: Long, endTime: Long, type: AlertType, title: String) {
+    fun addAlert(startTime: Long, type: AlertType, title: String) {
         viewModelScope.launch {
             val alert = AlertEntity(
                 title = title,
                 startTime = startTime,
-                endTime = startTime + 3600000,
                 type = type
             )
             repository.insertAlert(alert)

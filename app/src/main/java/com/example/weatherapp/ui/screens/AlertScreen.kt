@@ -1,7 +1,14 @@
 package com.example.weatherapp.ui.screens
 
+import android.annotation.SuppressLint
+import android.app.AlarmManager
 import android.app.DatePickerDialog
+import android.app.PendingIntent
 import android.app.TimePickerDialog
+import android.content.Context
+import android.content.Intent
+import android.os.Build
+import android.provider.Settings
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.example.weatherapp.AlarmReceiver
 import com.example.weatherapp.data.local.AlertType
 import com.example.weatherapp.data.local.AlertEntity
 import com.example.weatherapp.viewmodel.AlertsViewModel
@@ -35,9 +43,10 @@ fun AlertsScreen(viewModel: AlertsViewModel) {
     val alerts by viewModel.alerts.collectAsState()
     var showAddDialog by rememberSaveable  { mutableStateOf(false) }
     var selectedStartTime by rememberSaveable { mutableStateOf(System.currentTimeMillis()) }
-    var selectedEndTime by rememberSaveable { mutableStateOf(System.currentTimeMillis()) }
     var selectedType by rememberSaveable { mutableStateOf(AlertType.NOTIFICATION) }
     var alertTitle by rememberSaveable { mutableStateOf("") }
+    val context = LocalContext.current
+
 
     Scaffold(
         floatingActionButton = {
@@ -62,7 +71,12 @@ fun AlertsScreen(viewModel: AlertsViewModel) {
                     .padding(padding)
             ) {
                 items(alerts) { alert ->
-                    AlertItem(alert = alert, onDelete = { viewModel.deleteAlert(alert) })
+                    AlertItem(alert = alert,
+                        onDelete = {
+                        viewModel.deleteAlert(alert)
+                            cancelAlarm(context, timeMillis = alert.startTime)
+                        }
+                    )
                 }
             }
         }
@@ -91,11 +105,7 @@ fun AlertsScreen(viewModel: AlertsViewModel) {
                             onTimeSelected = { selectedStartTime = it }
                         )
 
-                        DateTimePicker(
-                            label = "End Time",
-                            selectedTime = selectedEndTime,
-                            onTimeSelected = { selectedEndTime = it }
-                        )
+
 
                         AlertTypeSelector(
                             selectedType = selectedType,
@@ -109,10 +119,10 @@ fun AlertsScreen(viewModel: AlertsViewModel) {
                             if (alertTitle.isNotBlank()) {
                                 viewModel.addAlert(
                                     startTime = selectedStartTime,
-                                    endTime = selectedEndTime,
                                     type = selectedType,
                                     title = alertTitle
                                 )
+                                scheduleAlarm(context, alertTitle, selectedStartTime, type = selectedType)
                                 showAddDialog = false
                                 alertTitle = ""
                             }
@@ -131,7 +141,53 @@ fun AlertsScreen(viewModel: AlertsViewModel) {
         }
     }
 }
+@SuppressLint("ScheduleExactAlarm")
+private fun scheduleAlarm(context: Context, title: String, timeMillis: Long, type: AlertType) {
+    val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+    val intent = Intent(context, AlarmReceiver::class.java).apply {
+        putExtra("ALERT_TITLE", title)
+        putExtra("ALERT_TYPE", type.name)
+    }
+    val pendingIntent = PendingIntent.getBroadcast(
+        context,
+        timeMillis.toInt(),
+        intent,
+        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+    )
 
+    if (timeMillis > System.currentTimeMillis()) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            if (alarmManager.canScheduleExactAlarms()) {
+                alarmManager.setAlarmClock(
+                    AlarmManager.AlarmClockInfo(timeMillis, pendingIntent),
+                    pendingIntent
+                )
+            } else {
+                // Show dialog to request exact alarm permission
+                val intent = Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM)
+                context.startActivity(intent)
+            }
+        } else {
+            alarmManager.setExactAndAllowWhileIdle(
+                AlarmManager.RTC_WAKEUP,
+                timeMillis,
+                pendingIntent
+            )
+        }
+    }
+}
+
+private fun cancelAlarm(context: Context, timeMillis: Long) {
+    val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+    val intent = Intent(context, AlarmReceiver::class.java)
+    val pendingIntent = PendingIntent.getBroadcast(
+        context,
+        timeMillis.toInt(),
+        intent,
+        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+    )
+    alarmManager.cancel(pendingIntent)
+}
 @Composable
 fun DateTimePicker(
     label: String,
@@ -227,13 +283,10 @@ fun AlertItem(
                     style = MaterialTheme.typography.titleMedium
                 )
                 Text(
-                    text = "From: ${formatDateTime(alert.startTime)}",
+                    text = "At: ${formatDateTime(alert.startTime)}",
                     style = MaterialTheme.typography.bodyMedium
                 )
-                Text(
-                    text = "To: ${formatDateTime(alert.endTime)}",
-                    style = MaterialTheme.typography.bodyMedium
-                )
+
                 Text(
                     text = "Type: ${alert.type}",
                     style = MaterialTheme.typography.bodySmall
