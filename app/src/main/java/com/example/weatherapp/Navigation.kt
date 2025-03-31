@@ -33,16 +33,18 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.weatherapp.data.SettingsRepository
 import com.example.weatherapp.data.WeatherRepository
 import com.example.weatherapp.ui.screens.AlertsScreen
 import com.example.weatherapp.ui.screens.FavoritesScreen
 import com.example.weatherapp.ui.screens.HomeScreen
 import com.example.weatherapp.ui.screens.MapScreen
-import com.example.weatherapp.ui.screens.SettingsScreen
 import com.example.weatherapp.viewmodel.AlertsViewModel
 import com.example.weatherapp.viewmodel.FavoriteViewModel
 import com.example.weatherapp.viewmodel.FavoriteViewModelFactory
 import com.example.weatherapp.viewmodel.HomeViewModel
+import com.example.weatherapp.viewmodel.SettingsViewModel
+import com.example.weatherapp.viewmodel.SettingsViewModelFactory
 
 sealed class Screen(
     val route: String,
@@ -63,7 +65,7 @@ sealed class Screen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(homeViewModel: HomeViewModel, repository: WeatherRepository)
+fun MainScreen(homeViewModel: HomeViewModel, repository: WeatherRepository , settingsRepository: SettingsRepository)
 {
     val navController = rememberNavController()
     val context = LocalContext.current
@@ -199,7 +201,10 @@ fun MainScreen(homeViewModel: HomeViewModel, repository: WeatherRepository)
                 AlertsScreen(viewModel = alertsViewModel)
             }
             composable(Screen.Settings.route) {
-                SettingsScreen()
+                val settingsViewModel = viewModel<SettingsViewModel>(
+                    factory = SettingsViewModelFactory(settingsRepository)
+                )
+                SettingsScreen(viewModel = settingsViewModel)
             }
 
 

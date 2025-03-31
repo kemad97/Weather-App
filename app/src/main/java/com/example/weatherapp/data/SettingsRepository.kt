@@ -1,5 +1,9 @@
 package com.example.weatherapp.data
 
+import com.example.weatherapp.viewmodel.Language
+import com.example.weatherapp.viewmodel.TemperatureUnit
+import com.example.weatherapp.viewmodel.WindSpeedUnit
+
 interface SettingsRepository {
 //    fun getSettings(): Settings
 //    fun saveSettings(settings: Settings)

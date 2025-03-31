@@ -2,6 +2,9 @@ package com.example.weatherapp.data
 
 import android.content.SharedPreferences
 import androidx.work.impl.model.Preference
+import com.example.weatherapp.viewmodel.Language
+import com.example.weatherapp.viewmodel.TemperatureUnit
+import com.example.weatherapp.viewmodel.WindSpeedUnit
 
 class SettingsRepositoryImpl(private val preference: SharedPreferences) : SettingsRepository {
 

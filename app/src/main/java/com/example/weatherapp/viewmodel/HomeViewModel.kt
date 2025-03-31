@@ -11,15 +11,17 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.weatherapp.BuildConfig
 import com.example.weatherapp.LocationTracker
 import com.example.weatherapp.ResultState
+import com.example.weatherapp.data.SettingsRepository
 import com.example.weatherapp.data.WeatherRepository
 import com.example.weatherapp.model.ApiResponse
 import kotlinx.coroutines.flow.collectLatest
 
 import kotlinx.coroutines.launch
 
-class HomeViewModel (private val repository: WeatherRepository, private val locationTracker: LocationTracker
-
-) : ViewModel() {
+class HomeViewModel (private val repository: WeatherRepository,
+                     private val locationTracker: LocationTracker,
+                     private val settingsRepository: SettingsRepository
+                     ) : ViewModel() {
 
     private val _weatherData= MutableStateFlow<ResultState <ApiResponse>>(ResultState.Empty)
     val weatherData : StateFlow<ResultState<ApiResponse>> = _weatherData
@@ -65,12 +67,13 @@ class HomeViewModel (private val repository: WeatherRepository, private val loca
 
 
 
-class WeatherViewModelFactory(private val repository: WeatherRepository ,
-                              private val locationTracker: LocationTracker
+class HomeViewModelFactory(private val repository: WeatherRepository,
+                           private val locationTracker: LocationTracker,
+                           private val settingsRepository: SettingsRepository
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(HomeViewModel::class.java)) {
-            return HomeViewModel(repository, locationTracker) as T
+            return HomeViewModel(repository, locationTracker,settingsRepository) as T
         }
         throw IllegalArgumentException("err WeatherViewModelFactory class")
     }

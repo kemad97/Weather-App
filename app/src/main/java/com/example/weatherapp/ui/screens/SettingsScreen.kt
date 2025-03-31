@@ -5,6 +5,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.weatherapp.ResultState
+import com.example.weatherapp.ui.screens.EmptyScreen
+import com.example.weatherapp.ui.screens.ErrorScreen
+import com.example.weatherapp.ui.screens.LoadingScreen
 import com.example.weatherapp.viewmodel.*
 
 @OptIn(ExperimentalMaterial3Api::class)
