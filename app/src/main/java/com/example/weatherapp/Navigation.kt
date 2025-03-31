@@ -1,6 +1,7 @@
 package com.example.weatherapp
 
 import FavoriteDetailScreen
+import SettingsScreen
 import android.content.Intent
 import android.provider.Settings
 import androidx.compose.foundation.layout.height
@@ -32,7 +33,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import androidx.navigation.toRoute
 import com.example.weatherapp.data.WeatherRepository
 import com.example.weatherapp.ui.screens.AlertsScreen
 import com.example.weatherapp.ui.screens.FavoritesScreen
@@ -42,7 +42,7 @@ import com.example.weatherapp.ui.screens.SettingsScreen
 import com.example.weatherapp.viewmodel.AlertsViewModel
 import com.example.weatherapp.viewmodel.FavoriteViewModel
 import com.example.weatherapp.viewmodel.FavoriteViewModelFactory
-import com.example.weatherapp.viewmodel.WeatherViewModel
+import com.example.weatherapp.viewmodel.HomeViewModel
 
 sealed class Screen(
     val route: String,
@@ -63,7 +63,7 @@ sealed class Screen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(weatherViewModel: WeatherViewModel, repository: WeatherRepository)
+fun MainScreen(homeViewModel: HomeViewModel, repository: WeatherRepository)
 {
     val navController = rememberNavController()
     val context = LocalContext.current
@@ -147,7 +147,7 @@ fun MainScreen(weatherViewModel: WeatherViewModel, repository: WeatherRepository
             modifier = Modifier.padding(paddingValues)
         ) {
             composable(Screen.Home.route) {
-                HomeScreen(weatherViewModel)
+                HomeScreen(homeViewModel)
             }
             composable(Screen.Favorites.route) {
                 val favoriteViewModel = viewModel<FavoriteViewModel>(

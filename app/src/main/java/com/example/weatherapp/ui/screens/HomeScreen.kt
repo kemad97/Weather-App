@@ -22,20 +22,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
-import coil.decode.GifDecoder
-import coil.request.ImageRequest
 import com.example.weatherapp.LocationTracker
 import com.example.weatherapp.R
 import com.example.weatherapp.ResultState
 import com.example.weatherapp.model.ApiResponse
 import com.example.weatherapp.model.ListItem
-import com.example.weatherapp.viewmodel.WeatherViewModel
+import com.example.weatherapp.viewmodel.HomeViewModel
 import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview(showSystemUi = true)
 @Composable
-fun HomeScreen(viewModel: WeatherViewModel = viewModel()) {
+fun HomeScreen(viewModel: HomeViewModel = viewModel()) {
     val weatherState by viewModel.weatherData.collectAsState()
 
     Scaffold(

@@ -8,7 +8,7 @@ import com.example.weatherapp.data.WeatherDatabase
 import com.example.weatherapp.data.WeatherRepository
 import com.example.weatherapp.data.local.LocalDataSourceImpl
 import com.example.weatherapp.ui.theme.WeatherAppTheme
-import com.example.weatherapp.viewmodel.WeatherViewModel
+import com.example.weatherapp.viewmodel.HomeViewModel
 import com.example.weatherapp.viewmodel.WeatherViewModelFactory
 
 class MainActivity : ComponentActivity() {
@@ -23,7 +23,7 @@ class MainActivity : ComponentActivity() {
         val viewModel = ViewModelProvider(
             this,
             WeatherViewModelFactory(repository, locationTracker)
-        )[WeatherViewModel::class.java]
+        )[HomeViewModel::class.java]
         setContent {
             WeatherAppTheme {
             MainScreen(viewModel, repository)

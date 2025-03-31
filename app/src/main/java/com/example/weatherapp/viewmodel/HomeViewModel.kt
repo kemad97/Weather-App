@@ -17,7 +17,7 @@ import kotlinx.coroutines.flow.collectLatest
 
 import kotlinx.coroutines.launch
 
-class WeatherViewModel (private val repository: WeatherRepository, private val locationTracker: LocationTracker
+class HomeViewModel (private val repository: WeatherRepository, private val locationTracker: LocationTracker
 
 ) : ViewModel() {
 
@@ -69,8 +69,8 @@ class WeatherViewModelFactory(private val repository: WeatherRepository ,
                               private val locationTracker: LocationTracker
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(WeatherViewModel::class.java)) {
-            return WeatherViewModel(repository, locationTracker) as T
+        if (modelClass.isAssignableFrom(HomeViewModel::class.java)) {
+            return HomeViewModel(repository, locationTracker) as T
         }
         throw IllegalArgumentException("err WeatherViewModelFactory class")
     }
