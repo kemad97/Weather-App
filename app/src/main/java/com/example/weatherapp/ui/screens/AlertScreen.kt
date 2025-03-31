@@ -24,10 +24,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
+import androidx.compose.material3.AlertDialogDefaults.containerColor
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.example.weatherapp.AlarmReceiver
@@ -86,6 +88,8 @@ fun AlertsScreen(viewModel: AlertsViewModel) {
                 onDismissRequest = { showAddDialog = false },
                 title = { Text("Add Weather Alert") },
                 text = {
+                    var timeError by rememberSaveable { mutableStateOf(false) }
+
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -102,11 +106,23 @@ fun AlertsScreen(viewModel: AlertsViewModel) {
                         DateTimePicker(
                             label = "Start Time",
                             selectedTime = selectedStartTime,
-                            onTimeSelected = { selectedStartTime = it }
+                            onTimeSelected = {
+                                if (it > System.currentTimeMillis()) {
+                                    selectedStartTime = it
+                                    timeError = false
+                                } else {
+                                    timeError = true
+                                }
+                            }
                         )
 
-
-
+                        if (timeError) {
+                            Text(
+                                text = "Start time must be in the future!",
+                                color = Color.Red,
+                                modifier = Modifier.padding(top = 4.dp)
+                            )
+                        }
                         AlertTypeSelector(
                             selectedType = selectedType,
                             onTypeSelected = { selectedType = it }
@@ -136,8 +152,11 @@ fun AlertsScreen(viewModel: AlertsViewModel) {
                     TextButton(onClick = { showAddDialog = false }) {
                         Text("Cancel")
                     }
-                }
+                } ,
+                containerColor = Color.DarkGray
+
             )
+
         }
     }
 }
@@ -196,13 +215,14 @@ fun DateTimePicker(
 ) {
     val context = LocalContext.current
     val calendar = Calendar.getInstance()
+    calendar.add(Calendar.MINUTE,1)
     calendar.timeInMillis = selectedTime
 
     Column {
         Text(text = label)
         Button(
             onClick = {
-                DatePickerDialog(
+                val datePicker = DatePickerDialog(
                     context,
                     { _, year, month, dayOfMonth ->
                         calendar.set(Calendar.YEAR, year)
@@ -224,7 +244,11 @@ fun DateTimePicker(
                     calendar.get(Calendar.YEAR),
                     calendar.get(Calendar.MONTH),
                     calendar.get(Calendar.DAY_OF_MONTH)
-                ).show()
+                )
+                datePicker.datePicker.minDate=System.currentTimeMillis()
+                datePicker.show()
+
+
             }
         ) {
             Text(formatDateTime(selectedTime))
