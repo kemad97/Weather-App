@@ -26,12 +26,13 @@ class LocationTracker(private val context: Context) {
     @SuppressLint("ServiceCast")
     fun checkLocationSettings() {
         val locationManager = context.getSystemService(LOCATION_SERVICE) as LocationManager
-        _isLocationEnabled.value = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
-                locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+        _isLocationEnabled.value =
+            locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
+                    locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
     }
 
     @SuppressLint("MissingPermission")
-     fun getLocationUpdates() {
+    fun getLocationUpdates() {
 
         fusedLocationClient.lastLocation.addOnSuccessListener { location ->
             location?.let {

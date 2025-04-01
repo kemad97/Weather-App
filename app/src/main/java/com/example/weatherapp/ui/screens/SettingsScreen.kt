@@ -29,6 +29,7 @@ fun SettingsScreen(viewModel: SettingsViewModel) {
                     modifier = Modifier.padding(padding)
                 )
             }
+
             is ResultState.Error -> ErrorScreen((settingsState as ResultState.Error).exception.message)
             ResultState.Empty -> EmptyScreen()
         }

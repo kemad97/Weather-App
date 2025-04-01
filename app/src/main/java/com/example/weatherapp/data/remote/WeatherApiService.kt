@@ -7,7 +7,6 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 
-
 interface WeatherApiService {
     @GET("weather")
     suspend fun getWeather(
@@ -28,6 +27,7 @@ interface WeatherApiService {
 
 
 }
+
 const val BASE_URL = "https://api.openweathermap.org/data/2.5/"
 
 object WeatherApi {

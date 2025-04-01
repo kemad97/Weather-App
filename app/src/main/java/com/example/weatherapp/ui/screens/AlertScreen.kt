@@ -43,7 +43,7 @@ import java.util.*
 @Composable
 fun AlertsScreen(viewModel: AlertsViewModel) {
     val alerts by viewModel.alerts.collectAsState()
-    var showAddDialog by rememberSaveable  { mutableStateOf(false) }
+    var showAddDialog by rememberSaveable { mutableStateOf(false) }
     var selectedStartTime by rememberSaveable { mutableStateOf(System.currentTimeMillis()) }
     var selectedType by rememberSaveable { mutableStateOf(AlertType.NOTIFICATION) }
     var alertTitle by rememberSaveable { mutableStateOf("") }
@@ -75,7 +75,7 @@ fun AlertsScreen(viewModel: AlertsViewModel) {
                 items(alerts) { alert ->
                     AlertItem(alert = alert,
                         onDelete = {
-                        viewModel.deleteAlert(alert)
+                            viewModel.deleteAlert(alert)
                             cancelAlarm(context, timeMillis = alert.startTime)
                         }
                     )
@@ -138,7 +138,12 @@ fun AlertsScreen(viewModel: AlertsViewModel) {
                                     type = selectedType,
                                     title = alertTitle
                                 )
-                                scheduleAlarm(context, alertTitle, selectedStartTime, type = selectedType)
+                                scheduleAlarm(
+                                    context,
+                                    alertTitle,
+                                    selectedStartTime,
+                                    type = selectedType
+                                )
                                 showAddDialog = false
                                 alertTitle = ""
                             }
@@ -152,7 +157,7 @@ fun AlertsScreen(viewModel: AlertsViewModel) {
                     TextButton(onClick = { showAddDialog = false }) {
                         Text("Cancel")
                     }
-                } ,
+                },
                 containerColor = Color.DarkGray
 
             )
@@ -160,6 +165,7 @@ fun AlertsScreen(viewModel: AlertsViewModel) {
         }
     }
 }
+
 @SuppressLint("ScheduleExactAlarm")
 private fun scheduleAlarm(context: Context, title: String, timeMillis: Long, type: AlertType) {
     val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
@@ -207,6 +213,7 @@ private fun cancelAlarm(context: Context, timeMillis: Long) {
     )
     alarmManager.cancel(pendingIntent)
 }
+
 @Composable
 fun DateTimePicker(
     label: String,
@@ -215,7 +222,7 @@ fun DateTimePicker(
 ) {
     val context = LocalContext.current
     val calendar = Calendar.getInstance()
-    calendar.add(Calendar.MINUTE,1)
+    calendar.add(Calendar.MINUTE, 1)
     calendar.timeInMillis = selectedTime
 
     Column {
@@ -245,7 +252,7 @@ fun DateTimePicker(
                     calendar.get(Calendar.MONTH),
                     calendar.get(Calendar.DAY_OF_MONTH)
                 )
-                datePicker.datePicker.minDate=System.currentTimeMillis()
+                datePicker.datePicker.minDate = System.currentTimeMillis()
                 datePicker.show()
 
 

@@ -36,7 +36,9 @@ fun FavoritesScreen(
             }
         }
     ) { padding ->
-        Box(modifier = Modifier.fillMaxSize().padding(padding)) {
+        Box(modifier = Modifier
+            .fillMaxSize()
+            .padding(padding)) {
             Column(modifier = Modifier.fillMaxSize()) {
                 Text(
                     text = "Favorite Locations",
@@ -64,10 +66,12 @@ fun FavoritesScreen(
                     val weatherData = (selectedWeather as ResultState.Success).data
                     // Display weather details in a dialog or expanded card
                 }
+
                 is ResultState.Error -> {
                     val error = (selectedWeather as ResultState.Error).exception.message
                     // Show error message
                 }
+
                 else -> {}
             }
         }

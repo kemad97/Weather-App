@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -96,30 +98,31 @@ fun WeatherScreen(apiResponse: ApiResponse, settings: Settings?) {
             contentScale = ContentScale.FillBounds,
             modifier = Modifier
                 .fillMaxSize()
-                .fillMaxHeight()
-                .fillMaxWidth()
         )
 
-        Column(
+        LazyColumn (
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = "$cityName, $country", fontSize = 28.sp, textAlign = TextAlign.Center)
-            Spacer(modifier = Modifier.height(8.dp))
+            item {
+                Text(text = "$cityName, $country", fontSize = 28.sp, textAlign = TextAlign.Center)
+                Spacer(modifier = Modifier.height(8.dp))
 
-            Image(
-                painter = getWeatherIcon(description),
-                contentDescription = "Weather Icon",
-                modifier = Modifier.size(100.dp)
-            )
+                Image(
+                    painter = getWeatherIcon(description),
+                    contentDescription = "Weather Icon",
+                    modifier = Modifier.size(100.dp)
+                )
 
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(text = "$temperature $tempUnit", fontSize = 64.sp)
-            Text(text = description, fontSize = 22.sp)
-            Spacer(modifier = Modifier.height(16.dp))
-
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(text = "$temperature $tempUnit", fontSize = 64.sp)
+                Text(text = description, fontSize = 22.sp)
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+            // Weather details
+            item {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly
@@ -128,50 +131,57 @@ fun WeatherScreen(apiResponse: ApiResponse, settings: Settings?) {
                 WeatherDetailItem("Wind", "$windSpeed $windUnit")
                 WeatherDetailItem("Pressure", "$pressure hPa")
             }
+                }
 
             // hourly forecase
+            item {
 
-            Spacer(modifier = Modifier.height(20.dp))
-            Text(text = "Hourly Forecast", fontSize = 20.sp)
-            LazyRow(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp)
-            ) {
-                items(apiResponse.list?.take(8) ?: emptyList()) { item ->
-                    HourlyWeatherItem(
-                        time = formatTime(item?.dtTxt ?: ""),
-                        temp = "${item?.main?.temp ?: "--"}$tempUnit"
-                    )
+                Spacer(modifier = Modifier.height(20.dp))
+                Text(text = "Hourly Forecast", fontSize = 20.sp)
+                LazyRow(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp)
+                ) {
+                    items(apiResponse.list?.take(8) ?: emptyList()) { item ->
+                        HourlyWeatherItem(
+                            time = formatTime(item?.dtTxt ?: ""),
+                            temp = "${item?.main?.temp ?: "--"}$tempUnit"
+                        )
+                    }
                 }
             }
+            item {
 
-            // 7 day forecase
-            Spacer(modifier = Modifier.height(20.dp))
-            Text(
-                text = "7-Day Forecast",
-                fontSize = 20.sp,
-                style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.padding(horizontal = 16.dp)
-            )
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxSize()
-                    .padding(vertical = 8.dp),
-                verticalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
+                // 5 day forecase
+                Spacer(modifier = Modifier.height(20.dp))
+                Text(
+                    text = "7-Day Forecast",
+                    fontSize = 20.sp,
+                    style = MaterialTheme.typography.titleLarge,
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
+            }
+
+//            LazyColumn(
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .fillMaxSize()
+//                    .padding(vertical = 8.dp),
+//                verticalArrangement = Arrangement.spacedBy(4.dp)
+//            ) {
                 val dailyForecasts = apiResponse.list
                     ?.filterNotNull()
                     ?.groupBy { it.dtTxt?.substring(0, 10) }
                     ?.map { it.value.first() }
-                    ?.take(7)
+                    ?.take(5)
                     ?: emptyList()
 
                 items(dailyForecasts) { forecast ->
                     DailyForecastItem(forecast, tempUnit)
                 }
-            }
+
+          //  }
         }
     }
 }
@@ -225,9 +235,32 @@ fun DailyForecastItem(forecast: ListItem, tempUnit: String) {
 
 @Composable
 fun WeatherDetailItem(title: String, value: String) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(text = title, fontSize = 14.sp)
-        Text(text = value, fontSize = 16.sp)
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.padding(horizontal = 8.dp)
+    ) {
+        Icon(
+            painter = when (title) {
+                "Humidity" -> painterResource(id = R.drawable.ic_humidty)
+                "Wind" -> painterResource(id = R.drawable.ic_wind)
+                "Pressure" -> painterResource(id = R.drawable.ic_pressre)
+                else -> painterResource(id = R.drawable.weather_ic)
+            },
+            contentDescription = title,
+            modifier = Modifier.size(24.dp),
+            tint = MaterialTheme.colorScheme.primary
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+        Text(
+            text = title,
+            fontSize = 14.sp,
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+        )
+        Text(
+            text = value,
+            fontSize = 16.sp,
+            color = MaterialTheme.colorScheme.onSurface
+        )
     }
 }
 
@@ -257,7 +290,7 @@ fun getWeatherIconByTemp(temp: String): Painter {
 }
 
 @Composable
-fun HourlyWeatherItem(time: String, temp: String) {
+fun HourlyWeatherItem(time: String, temp: String, description: String = "") {
     Card(
         modifier = Modifier.padding(8.dp),
     ) {
@@ -316,7 +349,7 @@ private fun formatDate(dateStr: String): String {
     }
 }
 
-private fun formatTime(dateStr: String): String {
+fun formatTime(dateStr: String): String {
     return try {
         val inputFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
         val outputFormat = SimpleDateFormat("HH:mm", Locale.getDefault())

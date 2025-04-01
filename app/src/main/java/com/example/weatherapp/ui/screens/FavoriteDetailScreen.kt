@@ -147,107 +147,94 @@ fun WeatherDetailContent(
             modifier = Modifier.fillMaxSize()
         )
 
-        Column(
+        LazyColumn (
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Header
-            Text(
-                text = "${apiResponse.city?.name}, ${apiResponse.city?.country}",
-                fontSize = 24.sp,
-                textAlign = TextAlign.Center
-            )
+            item {
+                Text(text = "$cityName, $country", fontSize = 28.sp, textAlign = TextAlign.Center)
+                Spacer(modifier = Modifier.height(8.dp))
 
-            Spacer(modifier = Modifier.height(8.dp))
-            val currentWeather = apiResponse.list?.firstOrNull()
+                Image(
+                    painter = getWeatherIcon(description),
+                    contentDescription = "Weather Icon",
+                    modifier = Modifier.size(100.dp)
+                )
 
-            Image(
-                painter = getWeatherIcon(currentWeather?.weather?.firstOrNull()?.description ?: ""),
-                contentDescription = "Weather Icon",
-                modifier = Modifier.size(100.dp)
-            )
-
-            Text(
-                text = "${currentWeather?.main?.temp?.let { "%.1f".format(it) }}$tempUnit",
-                fontSize = 64.sp
-            )
-            Text(
-                text = currentWeather?.weather?.firstOrNull()?.description?.replaceFirstChar {
-                    if (it.isLowerCase()) it.titlecase(
-                        Locale.getDefault()
-                    ) else it.toString()
-                } ?: "",
-                fontSize = 18.sp
-            )
-
-            // Weather Details
-            Spacer(modifier = Modifier.height(16.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                WeatherDetailItem("Humidity", "${currentWeather?.main?.humidity}%")
-                WeatherDetailItem("Wind", "${currentWeather?.wind?.speed} $windUnit")
-                WeatherDetailItem("Pressure", "${currentWeather?.main?.pressure} hPa")
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(text = "$temperature $tempUnit", fontSize = 64.sp)
+                Text(text = description, fontSize = 22.sp)
+                Spacer(modifier = Modifier.height(16.dp))
             }
-
-            // Hourly Forecast
-            Spacer(modifier = Modifier.height(20.dp))
-            Text(text = "Hourly Forecast", fontSize = 20.sp)
-            LazyRow(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp)
-            ) {
-                items(apiResponse.list?.take(8) ?: emptyList()) { item ->
-                    HourlyWeatherItem(
-                        time = formatTime(item?.dtTxt ?: ""),
-                        temp = "${item?.main?.temp?.let { "%.1f".format(it) }}$tempUnit"
-                    )
+            // Weather details
+            item {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    WeatherDetailItem("Humidity", "$humidity%")
+                    WeatherDetailItem("Wind", "$windSpeed $windUnit")
+                    WeatherDetailItem("Pressure", "$pressure hPa")
                 }
             }
 
-            // 7-Day Forecast
-            Spacer(modifier = Modifier.height(20.dp))
-            Text(
-                text = "7-Day Forecast",
-                fontSize = 20.sp,
-                style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.padding(horizontal = 16.dp)
-            )
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp),
-                verticalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-                val dailyForecasts = apiResponse.list
-                    ?.filterNotNull()
-                    ?.groupBy { it.dtTxt?.substring(0, 10) }
-                    ?.map { it.value.first() }
-                    ?.take(7)
-                    ?: emptyList()
+            // hourly forecase
+            item {
 
-                items(dailyForecasts) { forecast ->
-                    DailyForecastItem(forecast, tempUnit = tempUnit)
+                Spacer(modifier = Modifier.height(20.dp))
+                Text(text = "Hourly Forecast", fontSize = 20.sp)
+                LazyRow(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp)
+                ) {
+                    items(apiResponse.list?.take(8) ?: emptyList()) { item ->
+                        HourlyWeatherItem(
+                            time = com.example.weatherapp.ui.screens.formatTime(item?.dtTxt ?: ""),
+                            temp = "${item?.main?.temp ?: "--"}$tempUnit"
+                        )
+                    }
                 }
             }
+            item {
+
+                // 5 day forecase
+                Spacer(modifier = Modifier.height(20.dp))
+                Text(
+                    text = "7-Day Forecast",
+                    fontSize = 20.sp,
+                    style = MaterialTheme.typography.titleLarge,
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
+            }
+
+//            LazyColumn(
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .fillMaxSize()
+//                    .padding(vertical = 8.dp),
+//                verticalArrangement = Arrangement.spacedBy(4.dp)
+//            ) {
+            val dailyForecasts = apiResponse.list
+                ?.filterNotNull()
+                ?.groupBy { it.dtTxt?.substring(0, 10) }
+                ?.map { it.value.first() }
+                ?.take(5)
+                ?: emptyList()
+
+            items(dailyForecasts) { forecast ->
+                DailyForecastItem(forecast, tempUnit)
+            }
+
+            //  }
         }
     }
 
 
 }
 
-private fun formatTime(dateStr: String): String {
-    return try {
-        val inputFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-        val outputFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
-        val date = inputFormat.parse(dateStr)
-        outputFormat.format(date ?: return dateStr)
-    } catch (e: Exception) {
-        dateStr
-    }
-}
+
+
 

@@ -40,7 +40,8 @@ fun MapScreen(
     var cityName by remember { mutableStateOf("") }
 
     LaunchedEffect(Unit) {
-        Configuration.getInstance().load(context, PreferenceManager.getDefaultSharedPreferences(context))
+        Configuration.getInstance()
+            .load(context, PreferenceManager.getDefaultSharedPreferences(context))
     }
 
     LaunchedEffect(selectedLocation) {

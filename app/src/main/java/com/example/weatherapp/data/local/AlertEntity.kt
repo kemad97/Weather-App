@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 data class AlertEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
-    val title:String,
+    val title: String,
     val startTime: Long,
     val type: AlertType,
     val isEnabled: Boolean = true

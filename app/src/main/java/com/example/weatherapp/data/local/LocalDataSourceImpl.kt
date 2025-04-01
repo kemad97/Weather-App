@@ -2,7 +2,7 @@ package com.example.weatherapp.data.local
 
 import kotlinx.coroutines.flow.Flow
 
-class LocalDataSourceImpl( private val favAlertsDao: FavoritesAndAlertsDao) : LocalDataSource {
+class LocalDataSourceImpl(private val favAlertsDao: FavoritesAndAlertsDao) : LocalDataSource {
     override fun getAllFavorites(): Flow<List<FavoriteEntity>> {
         return favAlertsDao.getAllFavorites()
     }
@@ -16,15 +16,15 @@ class LocalDataSourceImpl( private val favAlertsDao: FavoritesAndAlertsDao) : Lo
     }
 
     override fun getAllAlerts(): Flow<List<AlertEntity>> {
-    return favAlertsDao.getAllAlerts()
+        return favAlertsDao.getAllAlerts()
     }
 
     override suspend fun insertAlert(alert: AlertEntity) {
-    favAlertsDao.insertAlert(alert)
+        favAlertsDao.insertAlert(alert)
     }
 
     override suspend fun deleteAlert(alert: AlertEntity) {
-favAlertsDao.deleteAlert(alert)
+        favAlertsDao.deleteAlert(alert)
     }
 
 

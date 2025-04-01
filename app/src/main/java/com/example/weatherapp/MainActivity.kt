@@ -27,16 +27,17 @@ class MainActivity : ComponentActivity() {
 
         val viewModel = ViewModelProvider(
             this,
-            HomeViewModelFactory(repository,
+            HomeViewModelFactory(
+                repository,
                 locationTracker,
-               settingsRepository
+                settingsRepository
             )
         )[HomeViewModel::class.java]
         setContent {
             WeatherAppTheme {
-            MainScreen(viewModel, repository,settingsRepository)
-        }
+                MainScreen(viewModel, repository, settingsRepository)
+            }
         }
 
-        }
     }
+}

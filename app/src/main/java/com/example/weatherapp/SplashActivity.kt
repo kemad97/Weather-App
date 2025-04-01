@@ -49,8 +49,8 @@ fun SplashScreen(onSplashComplete: () -> Unit) {
     )
 
     Box(
-        modifier = Modifier.
-        fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
             .background(
                 brush = Brush.verticalGradient(
                     colors = listOf(
@@ -59,7 +59,7 @@ fun SplashScreen(onSplashComplete: () -> Unit) {
                         Color(0xFF42A5F5)
                     )
                 )
-            ) ,
+            ),
         contentAlignment = Alignment.Center
     ) {
         LottieAnimation(

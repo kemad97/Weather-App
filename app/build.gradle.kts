@@ -1,4 +1,3 @@
-
 import java.util.Properties
 
 plugins {
@@ -71,17 +70,17 @@ dependencies {
 
 
     //Retrofit
-    implementation (libs.retrofit)
-    implementation (libs.converter.gson)
-    implementation (libs.okhttp)
-    implementation (libs.logging.interceptor)
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+    implementation(libs.okhttp)
+    implementation(libs.logging.interceptor)
 
     //Work Manager
-    implementation (libs.androidx.work.runtime.ktx.v271)
+    implementation(libs.androidx.work.runtime.ktx.v271)
 
 
     //Glide
-    implementation (libs.compose)
+    implementation(libs.compose)
     implementation(libs.androidx.runtime.livedata)
 
 
@@ -89,9 +88,9 @@ dependencies {
     implementation(libs.coil.gif) // Enables GIF animation support
 
 
-    implementation (libs.androidx.room.ktx)
-    implementation (libs.androidx.room.runtime)
-    ksp (libs.androidx.room.compiler)
+    implementation(libs.androidx.room.ktx)
+    implementation(libs.androidx.room.runtime)
+    ksp(libs.androidx.room.compiler)
 
     val nav_version = "2.8.8"
     implementation(libs.androidx.navigation.compose)
@@ -104,7 +103,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
 
     implementation("org.osmdroid:osmdroid-android:6.1.10")
-    implementation ("com.airbnb.android:lottie-compose:6.3.0")
+    implementation("com.airbnb.android:lottie-compose:6.3.0")
 
 
 }

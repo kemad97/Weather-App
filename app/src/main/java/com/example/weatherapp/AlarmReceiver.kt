@@ -34,7 +34,12 @@ class AlarmReceiver : BroadcastReceiver() {
                 val type = intent.getStringExtra("ALERT_TYPE") ?: AlertType.NOTIFICATION.name
 
                 when (type) {
-                    AlertType.NOTIFICATION.name -> showNotificationWithStop(context, title, isAlarm = false )
+                    AlertType.NOTIFICATION.name -> showNotificationWithStop(
+                        context,
+                        title,
+                        isAlarm = false
+                    )
+
                     AlertType.ALARM.name -> playAlarm(context, title)
                 }
             }
