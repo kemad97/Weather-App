@@ -5,12 +5,16 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.weatherapp.ResultState
 import com.example.weatherapp.data.SettingsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 
-class SettingsViewModel (private val repository: SettingsRepository) : ViewModel() {
+class SettingsViewModel(private val repository: SettingsRepository) : ViewModel() {
     private val _settingsState = MutableStateFlow<ResultState<Settings>>(ResultState.Loading)
-    val settingsState = _settingsState.asStateFlow()
+    val settingsState: StateFlow<ResultState<Settings>> = _settingsState.asStateFlow()
+
+    private val _currentSettings = MutableStateFlow<Settings?>(null)
+    val currentSettings: StateFlow<Settings?> = _currentSettings.asStateFlow()
 
     init {
         loadSettings()
@@ -25,6 +29,8 @@ class SettingsViewModel (private val repository: SettingsRepository) : ViewModel
                 language = Language.valueOf(repository.getLanguage())
             )
             _settingsState.value = ResultState.Success(settings)
+            _currentSettings.value = settings
+
         } catch (e: Exception) {
             _settingsState.value = ResultState.Error(e)
         }
@@ -69,13 +75,16 @@ class SettingsViewModel (private val repository: SettingsRepository) : ViewModel
     private fun updateSettingsState(update: (Settings) -> Settings) {
         val currentState = _settingsState.value
         if (currentState is ResultState.Success) {
-            _settingsState.value = ResultState.Success(update(currentState.data))
+            val newSettings = update(currentState.data)
+            _settingsState.value = ResultState.Success(newSettings)
+            _currentSettings.value = newSettings
         }
     }
 }
 
 
-class SettingsViewModelFactory(private val repository: SettingsRepository) : ViewModelProvider.Factory {
+class SettingsViewModelFactory(private val repository: SettingsRepository) :
+    ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(SettingsViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
@@ -84,7 +93,6 @@ class SettingsViewModelFactory(private val repository: SettingsRepository) : Vie
         throw IllegalArgumentException("Unknown ViewModel class")
     }
 }
-
 
 
 data class Settings(

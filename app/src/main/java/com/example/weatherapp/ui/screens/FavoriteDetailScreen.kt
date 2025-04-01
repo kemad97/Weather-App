@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -46,6 +47,9 @@ import com.example.weatherapp.ui.screens.HourlyWeatherItem
 import com.example.weatherapp.ui.screens.WeatherDetailItem
 import com.example.weatherapp.ui.screens.getWeatherIcon
 import com.example.weatherapp.viewmodel.FavoriteViewModel
+import com.example.weatherapp.viewmodel.SettingsViewModel
+import com.example.weatherapp.viewmodel.TemperatureUnit
+import com.example.weatherapp.viewmodel.WindSpeedUnit
 import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -68,7 +72,7 @@ fun FavoriteDetailScreen(
                 title = { Text("Weather Details") },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back")
                     }
                 }
             )
@@ -85,10 +89,12 @@ fun FavoriteDetailScreen(
                         modifier = Modifier.align(Alignment.Center)
                     )
                 }
+
                 is ResultState.Success -> {
                     val weather = state.data
-                    WeatherDetailContent(weather)
+                    WeatherDetailContent(weather, viewModel)
                 }
+
                 is ResultState.Error -> {
                     Text(
                         text = "Error: ${state.exception.message}",
@@ -97,6 +103,7 @@ fun FavoriteDetailScreen(
                             .padding(16.dp)
                     )
                 }
+
                 else -> {}
             }
         }
@@ -104,18 +111,37 @@ fun FavoriteDetailScreen(
 }
 
 @Composable
-fun WeatherDetailContent(apiResponse: ApiResponse) {
+fun WeatherDetailContent(
+    apiResponse: ApiResponse, viewModel: FavoriteViewModel
+) {
+    val settings by viewModel.settings.collectAsState()
+
     val cityName = apiResponse.city?.name ?: "Unknown"
     val country = apiResponse.city?.country ?: ""
     val temperature = apiResponse.list?.firstOrNull()?.main?.temp?.toString() ?: "--"
-    val description = apiResponse.list?.firstOrNull()?.weather?.firstOrNull()?.description ?: "Unknown"
+    val description =
+        apiResponse.list?.firstOrNull()?.weather?.firstOrNull()?.description ?: "Unknown"
     val humidity = apiResponse.list?.firstOrNull()?.main?.humidity?.toString() ?: "--"
     val windSpeed = apiResponse.list?.firstOrNull()?.wind?.speed?.toString() ?: "--"
     val pressure = apiResponse.list?.firstOrNull()?.main?.pressure?.toString() ?: "--"
 
+    val tempUnit = when (settings?.temperatureUnit) {
+        TemperatureUnit.CELSIUS -> "°C"
+        TemperatureUnit.FAHRENHEIT -> "°F"
+        TemperatureUnit.KELVIN -> "K"
+        null -> "°C"
+    }
+
+    val windUnit = when (settings?.windSpeedUnit) {
+        WindSpeedUnit.METER_PER_SEC -> "m/s"
+        WindSpeedUnit.MILES_PER_HOUR -> "mph"
+        null -> "m/s"
+
+    }
+
     Box(modifier = Modifier.fillMaxSize()) {
         AsyncImage(
-            model=R.drawable.beautifulmountains,
+            model = R.drawable.beautifulmountains,
             contentDescription = "Weather Background",
             contentScale = ContentScale.FillBounds,
             modifier = Modifier.fillMaxSize()
@@ -144,7 +170,7 @@ fun WeatherDetailContent(apiResponse: ApiResponse) {
             )
 
             Text(
-                text = "${currentWeather?.main?.temp?.let { "%.1f".format(it) }}°C",
+                text = "${currentWeather?.main?.temp?.let { "%.1f".format(it) }}$tempUnit",
                 fontSize = 64.sp
             )
             Text(
@@ -163,7 +189,7 @@ fun WeatherDetailContent(apiResponse: ApiResponse) {
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
                 WeatherDetailItem("Humidity", "${currentWeather?.main?.humidity}%")
-                WeatherDetailItem("Wind", "${currentWeather?.wind?.speed} km/h")
+                WeatherDetailItem("Wind", "${currentWeather?.wind?.speed} $windUnit")
                 WeatherDetailItem("Pressure", "${currentWeather?.main?.pressure} hPa")
             }
 
@@ -178,7 +204,7 @@ fun WeatherDetailContent(apiResponse: ApiResponse) {
                 items(apiResponse.list?.take(8) ?: emptyList()) { item ->
                     HourlyWeatherItem(
                         time = formatTime(item?.dtTxt ?: ""),
-                        temp = "${item?.main?.temp?.let { "%.1f".format(it) }}°C"
+                        temp = "${item?.main?.temp?.let { "%.1f".format(it) }}$tempUnit"
                     )
                 }
             }
@@ -205,15 +231,15 @@ fun WeatherDetailContent(apiResponse: ApiResponse) {
                     ?: emptyList()
 
                 items(dailyForecasts) { forecast ->
-                    DailyForecastItem(forecast)
+                    DailyForecastItem(forecast, tempUnit = tempUnit)
                 }
             }
         }
     }
 
 
-
 }
+
 private fun formatTime(dateStr: String): String {
     return try {
         val inputFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())

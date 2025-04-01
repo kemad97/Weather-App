@@ -28,6 +28,9 @@ import com.example.weatherapp.ResultState
 import com.example.weatherapp.model.ApiResponse
 import com.example.weatherapp.model.ListItem
 import com.example.weatherapp.viewmodel.HomeViewModel
+import com.example.weatherapp.viewmodel.Settings
+import com.example.weatherapp.viewmodel.TemperatureUnit
+import com.example.weatherapp.viewmodel.WindSpeedUnit
 import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -35,40 +38,66 @@ import java.util.Locale
 @Composable
 fun HomeScreen(viewModel: HomeViewModel = viewModel()) {
     val weatherState by viewModel.weatherData.collectAsState()
+    val settings by viewModel.settings.collectAsState()
 
     Scaffold(
 
-    ) {paddingValues->
+    ) { paddingValues ->
         Box(modifier = Modifier.padding(paddingValues)) {
-        when (weatherState) {
-            is ResultState.Loading -> LoadingScreen()
-            is ResultState.Success -> WeatherScreen((weatherState as ResultState.Success<ApiResponse>).data)
-            is ResultState.Error -> ErrorScreen((weatherState as ResultState.Error).exception.message)
-            ResultState.Empty -> EmptyScreen()
-        }
+            when (weatherState) {
+                is ResultState.Loading -> LoadingScreen()
+                is ResultState.Success -> WeatherScreen(
+                    (weatherState as ResultState.Success<ApiResponse>).data,
+                    settings = settings ?: Settings()
+                )
+
+                is ResultState.Error -> ErrorScreen((weatherState as ResultState.Error).exception.message)
+                ResultState.Empty -> EmptyScreen()
+            }
         }
     }
 }
 
 @Composable
-fun WeatherScreen(apiResponse: ApiResponse) {
+fun WeatherScreen(apiResponse: ApiResponse, settings: Settings?) {
     val cityName = apiResponse.city?.name ?: "Unknown"
     val country = apiResponse.city?.country ?: ""
     val temperature = apiResponse.list?.firstOrNull()?.main?.temp?.toString() ?: "--"
-    val description = apiResponse.list?.firstOrNull()?.weather?.firstOrNull()?.description ?: "Unknown"
+    val description =
+        apiResponse.list?.firstOrNull()?.weather?.firstOrNull()?.description ?: "Unknown"
     val humidity = apiResponse.list?.firstOrNull()?.main?.humidity?.toString() ?: "--"
     val windSpeed = apiResponse.list?.firstOrNull()?.wind?.speed?.toString() ?: "--"
     val pressure = apiResponse.list?.firstOrNull()?.main?.pressure?.toString() ?: "--"
 
-    Box(modifier = Modifier.fillMaxSize()
-        .systemBarsPadding()
+    val tempUnit = when (settings?.temperatureUnit) {
+        TemperatureUnit.CELSIUS -> "°C"
+        TemperatureUnit.FAHRENHEIT -> "°F"
+        TemperatureUnit.KELVIN -> "K"
+        null -> "°C"
+    }
+
+    val windUnit = when (settings?.windSpeedUnit) {
+        WindSpeedUnit.METER_PER_SEC -> "m/s"
+        WindSpeedUnit.MILES_PER_HOUR -> "mph"
+        null -> "m/s"
+
+    }
+
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .systemBarsPadding()
     ) {
         AsyncImage(
-        //    model = getWeatherBackground(description),
-            model=R.drawable.beautifulmountains,
+            //    model = getWeatherBackground(description),
+            model = R.drawable.beautifulmountains,
             contentDescription = "Weather Background",
             contentScale = ContentScale.FillBounds,
-            modifier = Modifier.fillMaxSize().fillMaxHeight().fillMaxWidth()
+            modifier = Modifier
+                .fillMaxSize()
+                .fillMaxHeight()
+                .fillMaxWidth()
         )
 
         Column(
@@ -77,7 +106,7 @@ fun WeatherScreen(apiResponse: ApiResponse) {
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = "$cityName, $country", fontSize = 24.sp, textAlign = TextAlign.Center)
+            Text(text = "$cityName, $country", fontSize = 28.sp, textAlign = TextAlign.Center)
             Spacer(modifier = Modifier.height(8.dp))
 
             Image(
@@ -87,8 +116,8 @@ fun WeatherScreen(apiResponse: ApiResponse) {
             )
 
             Spacer(modifier = Modifier.height(8.dp))
-            Text(text = "$temperature°C", fontSize = 64.sp)
-            Text(text = description, fontSize = 18.sp)
+            Text(text = "$temperature $tempUnit", fontSize = 64.sp)
+            Text(text = description, fontSize = 22.sp)
             Spacer(modifier = Modifier.height(16.dp))
 
             Row(
@@ -96,7 +125,7 @@ fun WeatherScreen(apiResponse: ApiResponse) {
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
                 WeatherDetailItem("Humidity", "$humidity%")
-                WeatherDetailItem("Wind", "$windSpeed km/h")
+                WeatherDetailItem("Wind", "$windSpeed $windUnit")
                 WeatherDetailItem("Pressure", "$pressure hPa")
             }
 
@@ -112,7 +141,7 @@ fun WeatherScreen(apiResponse: ApiResponse) {
                 items(apiResponse.list?.take(8) ?: emptyList()) { item ->
                     HourlyWeatherItem(
                         time = formatTime(item?.dtTxt ?: ""),
-                        temp = "${item?.main?.temp ?: "--"}°C"
+                        temp = "${item?.main?.temp ?: "--"}$tempUnit"
                     )
                 }
             }
@@ -125,7 +154,7 @@ fun WeatherScreen(apiResponse: ApiResponse) {
                 style = MaterialTheme.typography.titleLarge,
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
-            LazyColumn  (
+            LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()
                     .fillMaxSize()
@@ -140,7 +169,7 @@ fun WeatherScreen(apiResponse: ApiResponse) {
                     ?: emptyList()
 
                 items(dailyForecasts) { forecast ->
-                    DailyForecastItem(forecast)
+                    DailyForecastItem(forecast, tempUnit)
                 }
             }
         }
@@ -148,7 +177,7 @@ fun WeatherScreen(apiResponse: ApiResponse) {
 }
 
 @Composable
-fun DailyForecastItem(forecast: ListItem) {
+fun DailyForecastItem(forecast: ListItem, tempUnit: String) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -185,7 +214,7 @@ fun DailyForecastItem(forecast: ListItem) {
 
             // Temperature
             Text(
-                text = "${forecast.main?.temp?.toString()}°C",
+                text = "${forecast.main?.temp?.toString()}$tempUnit",
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.primary
             )
@@ -229,12 +258,16 @@ fun getWeatherIconByTemp(temp: String): Painter {
 
 @Composable
 fun HourlyWeatherItem(time: String, temp: String) {
-    Card(modifier = Modifier.padding(8.dp) ,
+    Card(
+        modifier = Modifier.padding(8.dp),
+    ) {
+        Column(
+            modifier = Modifier.padding(8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-        Column(modifier = Modifier.padding(8.dp), horizontalAlignment = Alignment.CenterHorizontally) {
             Text(text = time, fontSize = 14.sp)
             Image(
-                painter = getWeatherIconByTemp(temp) ,
+                painter = getWeatherIconByTemp(temp),
                 contentDescription = "Weather Icon",
                 modifier = Modifier.size(40.dp)
             )
@@ -253,17 +286,23 @@ fun LoadingScreen() {
 @Composable
 fun getWeatherIcon(description: String): Painter {
     return when {
-        description.contains("cloud", ignoreCase = true) -> painterResource(id = R.drawable.weather_ic)
+        description.contains(
+            "cloud",
+            ignoreCase = true
+        ) -> painterResource(id = R.drawable.weather_ic)
+
         description.contains("rain", ignoreCase = true) -> painterResource(id = R.drawable.ic_rain)
-        description.contains("sun" , ignoreCase = true) -> painterResource(id = R.drawable.ic_sunny)
-        description.contains("clear" , ignoreCase = true) -> painterResource(id = R.drawable.ic_sunny)
+        description.contains("sun", ignoreCase = true) -> painterResource(id = R.drawable.ic_sunny)
+        description.contains(
+            "clear",
+            ignoreCase = true
+        ) -> painterResource(id = R.drawable.ic_sunny)
 
         description.contains("snow", ignoreCase = true) -> painterResource(id = R.drawable.ic_snow)
 
         else -> painterResource(id = R.drawable.weather_ic)
     }
 }
-
 
 
 private fun formatDate(dateStr: String): String {
@@ -297,7 +336,9 @@ fun EmptyScreen() {
         contentAlignment = Alignment.Center
     ) {
 
-        Spacer(modifier = Modifier.height(16.dp).padding(16.dp))
+        Spacer(modifier = Modifier
+            .height(16.dp)
+            .padding(16.dp))
         Button(onClick = {
             LocationTracker.getInstance(context).getLocationUpdates()
 

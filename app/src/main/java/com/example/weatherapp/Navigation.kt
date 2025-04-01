@@ -51,7 +51,7 @@ sealed class Screen(
     var icon: Int,
     val label: String
 ) {
-    data object Home : Screen("home",R.drawable.ic_home, "Home")
+    data object Home : Screen("home", R.drawable.ic_home, "Home")
     data object Favorites : Screen("favorites", R.drawable.ic_fav, "Favorites")
     data object Alerts : Screen("alerts", R.drawable.ic_alerts, "Alerts")
     data object Settings : Screen("settings", R.drawable.ic_settings, "Settings")
@@ -65,8 +65,11 @@ sealed class Screen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(homeViewModel: HomeViewModel, repository: WeatherRepository , settingsRepository: SettingsRepository)
-{
+fun MainScreen(
+    homeViewModel: HomeViewModel,
+    repository: WeatherRepository,
+    settingsRepository: SettingsRepository
+) {
     val navController = rememberNavController()
     val context = LocalContext.current
     val isLocationEnabled by LocationTracker(context).isLocationEnabled.collectAsState()
@@ -76,7 +79,7 @@ fun MainScreen(homeViewModel: HomeViewModel, repository: WeatherRepository , set
     if (!isLocationEnabled && showDialog) {
         AlertDialog(
             onDismissRequest = {
-              //  showDialog = false
+                //  showDialog = false
             },
             title = { Text("Location Required") },
             text = { Text("Please enable location services to get weather information.") },
@@ -119,7 +122,9 @@ fun MainScreen(homeViewModel: HomeViewModel, repository: WeatherRepository , set
                         icon = {
                             Icon(
                                 painter = painterResource(id = screen.icon),
-                                contentDescription = screen.label) },
+                                contentDescription = screen.label
+                            )
+                        },
 
                         label = { Text(screen.label) },
                         selected = currentDestination?.hierarchy?.any {
@@ -138,7 +143,7 @@ fun MainScreen(homeViewModel: HomeViewModel, repository: WeatherRepository , set
                         },
 
 
-                    )
+                        )
                 }
             }
         }
@@ -152,21 +157,23 @@ fun MainScreen(homeViewModel: HomeViewModel, repository: WeatherRepository , set
                 HomeScreen(homeViewModel)
             }
             composable(Screen.Favorites.route) {
+
                 val favoriteViewModel = viewModel<FavoriteViewModel>(
-                    factory = FavoriteViewModelFactory(repository)
+                    factory = FavoriteViewModelFactory(repository, settingsRepository)
                 )
                 FavoritesScreen(
                     viewModel = favoriteViewModel,
                     onNavigateToMap = { navController.navigate(Screen.Map.route) },
                     onNavigateToDetail = { lat, lon ->
-                        navController.navigate(Screen.FavoriteDetail.createRoute(lat, lon))}
+                        navController.navigate(Screen.FavoriteDetail.createRoute(lat, lon))
+                    }
 
                 )
             }
 
             composable(Screen.Map.route) {
                 val favoriteViewModel = viewModel<FavoriteViewModel>(
-                    factory = FavoriteViewModelFactory(repository)
+                    factory = FavoriteViewModelFactory(repository, settingsRepository)
                 )
                 MapScreen(
                     viewModel = favoriteViewModel,
@@ -184,7 +191,7 @@ fun MainScreen(homeViewModel: HomeViewModel, repository: WeatherRepository , set
                 val lat = backStackEntry.arguments?.getFloat("lat")?.toDouble() ?: 0.0
                 val lon = backStackEntry.arguments?.getFloat("lon")?.toDouble() ?: 0.0
                 val favoriteViewModel = viewModel<FavoriteViewModel>(
-                    factory = FavoriteViewModelFactory(repository)
+                    factory = FavoriteViewModelFactory(repository, settingsRepository)
                 )
                 FavoriteDetailScreen(
                     lat = lat,
@@ -206,7 +213,6 @@ fun MainScreen(homeViewModel: HomeViewModel, repository: WeatherRepository , set
                 )
                 SettingsScreen(viewModel = settingsViewModel)
             }
-
 
 
         }
