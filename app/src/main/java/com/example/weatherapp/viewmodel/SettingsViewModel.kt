@@ -1,5 +1,7 @@
 package com.example.weatherapp.viewmodel
 
+import android.content.res.Configuration
+import androidx.compose.ui.text.intl.Locale
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.weatherapp.ResultState
@@ -81,6 +83,7 @@ class SettingsViewModel(private val repository: SettingsRepository) : ViewModel(
         }
     }
 }
+
 
 
 class SettingsViewModelFactory(private val repository: SettingsRepository) :
