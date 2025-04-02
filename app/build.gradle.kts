@@ -65,6 +65,7 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
+    androidTestImplementation(libs.androidx.core.testing)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
@@ -87,7 +88,7 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.coil.gif) // Enables GIF animation support
 
-
+//room
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.room.runtime)
     ksp(libs.androidx.room.compiler)
@@ -104,6 +105,28 @@ dependencies {
 
     implementation("org.osmdroid:osmdroid-android:6.1.10")
     implementation("com.airbnb.android:lottie-compose:6.3.0")
+
+
+
+
+    // Testing:junit:4.13.2"
+    testImplementation ("androidx.arch.core:core-testing:2.2.0")
+    testImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+    testImplementation ("com.google.truth:truth:1.1.5")
+    testImplementation ("androidx.test:core-ktx:1.5.0")
+
+
+    val room_version = "2.6.1"
+    // Android Testing
+    androidTestImplementation ("androidx.test.ext:junit:1.1.5")
+    androidTestImplementation ("androidx.test:runner:1.5.2")
+    androidTestImplementation ("androidx.test:rules:1.5.0")
+    androidTestImplementation ("androidx.room:room-testing:$room_version")
+
+
+    //MockK
+    testImplementation ("io.mockk:mockk-android:1.13.17")
+    testImplementation ("io.mockk:mockk-agent:1.13.17")
 
 
 }
