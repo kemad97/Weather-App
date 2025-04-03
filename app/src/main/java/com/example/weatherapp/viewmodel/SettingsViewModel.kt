@@ -25,7 +25,7 @@ class SettingsViewModel(private val repository: SettingsRepository) : ViewModel(
     private fun loadSettings() {
         try {
             val settings = Settings(
-                useGPS = repository.getUseGPS(),
+                locationMethod = repository.getLocationMethod(),
                 temperatureUnit = TemperatureUnit.valueOf(repository.getTemperatureUnit()),
                 windSpeedUnit = WindSpeedUnit.valueOf(repository.getWindSpeedUnit()),
                 language = Language.valueOf(repository.getLanguage())
@@ -38,10 +38,10 @@ class SettingsViewModel(private val repository: SettingsRepository) : ViewModel(
         }
     }
 
-    fun updateLocationMethod(useGPS: Boolean) {
+    fun updateLocationMethod(method: LocationMethod) {
         try {
-            repository.updateUseGPS(useGPS)
-            updateSettingsState { it.copy(useGPS = useGPS) }
+            repository.updateLocationMethod(method)
+            updateSettingsState { it.copy(locationMethod = method) }
         } catch (e: Exception) {
             _settingsState.value = ResultState.Error(e)
         }
@@ -99,11 +99,15 @@ class SettingsViewModelFactory(private val repository: SettingsRepository) :
 
 
 data class Settings(
-    val useGPS: Boolean = true,
+    val locationMethod: LocationMethod = LocationMethod.GPS,
     val temperatureUnit: TemperatureUnit = TemperatureUnit.CELSIUS,
     val windSpeedUnit: WindSpeedUnit = WindSpeedUnit.METER_PER_SEC,
     val language: Language = Language.ENGLISH
 )
+
+enum class LocationMethod {
+    GPS, MAP
+}
 
 enum class TemperatureUnit {
     CELSIUS, FAHRENHEIT, KELVIN

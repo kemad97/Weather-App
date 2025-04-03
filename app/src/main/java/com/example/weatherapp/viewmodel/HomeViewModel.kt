@@ -50,7 +50,7 @@ class HomeViewModel(
                 currentWindUnit = _settings.value?.windSpeedUnit ?: WindSpeedUnit.METER_PER_SEC
 
                 _settings.value = Settings(
-                    useGPS = newSettings.useGPS,
+                    locationMethod = newSettings.locationMethod,
                     temperatureUnit = newSettings.temperatureUnit,
                     windSpeedUnit = newSettings.windSpeedUnit,
                     language = newSettings.language

@@ -3,6 +3,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.weatherapp.ResultState
 import com.example.weatherapp.ui.screens.EmptyScreen
@@ -36,10 +37,11 @@ fun SettingsScreen(viewModel: SettingsViewModel) {
     }
 }
 
+@Preview (showSystemUi = true)
 @Composable
 private fun SettingsContent(
     settings: Settings,
-    onLocationMethodChange: (Boolean) -> Unit,
+    onLocationMethodChange: (LocationMethod) -> Unit,
     onTemperatureUnitChange: (TemperatureUnit) -> Unit,
     onWindSpeedUnitChange: (WindSpeedUnit) -> Unit,
     onLanguageChange: (Language) -> Unit,
@@ -62,18 +64,20 @@ private fun SettingsContent(
                     text = "Location Method",
                     style = MaterialTheme.typography.titleMedium
                 )
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "Use GPS",
-                        modifier = Modifier.weight(1f)
-                    )
-                    Switch(
-                        checked = settings.useGPS,
-                        onCheckedChange = onLocationMethodChange
-                    )
+                LocationMethod.values().forEach { method ->
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        RadioButton(
+                            selected = settings.locationMethod==method,
+                            onClick = {onLocationMethodChange(method) }
+                        )
+                        Text(
+                            text = method.name,
+                            modifier = Modifier.padding(start = 8.dp)
+                        )
+                    }
                 }
             }
         }
