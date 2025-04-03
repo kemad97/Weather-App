@@ -25,6 +25,9 @@ class HomeViewModel(
     private val locationTracker: LocationTracker,
     private val settingsRepository: SettingsRepository
 ) : ViewModel() {
+    private val _isOnline = MutableStateFlow(true)
+    val isOnline: StateFlow<Boolean> = _isOnline
+
 
     private val _weatherData = MutableStateFlow<ResultState<ApiResponse>>(ResultState.Loading)
     val weatherData: StateFlow<ResultState<ApiResponse>> = _weatherData
@@ -37,25 +40,32 @@ class HomeViewModel(
 
 
     init {
-        _weatherData.value = ResultState.Loading
-        observeLocationAndFetchWeather()
         observeSettings()
+        observeLocationAndFetchWeather()
+        checkConnectivity()
+
+    }
+
+
+    private fun checkConnectivity() {
+        viewModelScope.launch {
+            try {
+                repository.fetchWeather(0.0, 0.0, BuildConfig.WEATHER_API_KEY)
+                _isOnline.value = true
+            } catch (e: Exception) {
+                _isOnline.value = false
+            }
+        }
     }
 
     private fun observeSettings() {
         viewModelScope.launch {
             settingsRepository.settingsFlow.collect { newSettings ->
+                _settings.value = newSettings
 
-                currentTempUnit = _settings.value?.temperatureUnit ?: TemperatureUnit.CELSIUS
-                currentWindUnit = _settings.value?.windSpeedUnit ?: WindSpeedUnit.METER_PER_SEC
-
-                _settings.value = Settings(
-                    locationMethod = newSettings.locationMethod,
-                    temperatureUnit = newSettings.temperatureUnit,
-                    windSpeedUnit = newSettings.windSpeedUnit,
-                    language = newSettings.language
-                )
-                convertWeatherData()
+                if (newSettings.locationMethod == LocationMethod.GPS) {
+                    locationTracker.getLocationUpdates()
+                }
             }
         }
     }

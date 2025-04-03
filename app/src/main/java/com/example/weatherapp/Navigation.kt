@@ -226,7 +226,7 @@ fun MainScreen(
                 )
                 SettingsScreen(
                     viewModel = settingsViewModel,
-                    onNavigateToMap = { navController.navigate(Screen.Map.route) }
+                    onNavigateToMap = { navController.navigate(Screen.MapSettings.route) }
                 )
             }
 

@@ -51,6 +51,10 @@ fun AlertsScreen(viewModel: AlertsViewModel) {
 
 
     Scaffold(
+        topBar = { TopAppBar(
+            title = {Text("Weather Alerts")  }
+        )
+        },
         floatingActionButton = {
             FloatingActionButton(onClick = { showAddDialog = true }) {
                 Icon(Icons.Default.Add, "Add Alert")
@@ -81,6 +85,7 @@ fun AlertsScreen(viewModel: AlertsViewModel) {
                     )
                 }
             }
+
         }
 
         if (showAddDialog) {

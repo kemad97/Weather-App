@@ -10,6 +10,8 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -30,6 +32,7 @@ import com.example.weatherapp.ResultState
 import com.example.weatherapp.model.ApiResponse
 import com.example.weatherapp.model.ListItem
 import com.example.weatherapp.viewmodel.HomeViewModel
+import com.example.weatherapp.viewmodel.LocationMethod
 import com.example.weatherapp.viewmodel.Settings
 import com.example.weatherapp.viewmodel.TemperatureUnit
 import com.example.weatherapp.viewmodel.WindSpeedUnit
@@ -39,24 +42,41 @@ import java.util.Locale
 @Preview(showSystemUi = true)
 @Composable
 fun HomeScreen(viewModel: HomeViewModel = viewModel()) {
+
     val weatherState by viewModel.weatherData.collectAsState()
     val settings by viewModel.settings.collectAsState()
+    val isOnline by viewModel.isOnline.collectAsState()
+
+
+
 
     Scaffold(
-
+        topBar = {
+            TopAppBar(
+                title = { Text("Weather Forecast") },
+                actions = {
+                    IconButton(onClick = { viewModel.observeLocationAndFetchWeather() }) {
+                        Icon(Icons.Default.Refresh, "Refresh")
+                    }
+                }
+            )
+        }
     ) { paddingValues ->
         Box(modifier = Modifier.padding(paddingValues)) {
             when (weatherState) {
                 is ResultState.Loading -> LoadingScreen()
-                is ResultState.Success -> WeatherScreen(
-                    (weatherState as ResultState.Success<ApiResponse>).data,
-                    settings = settings ?: Settings()
-                )
+                is ResultState.Success -> {
+                    WeatherScreen(
+                        (weatherState as ResultState.Success<ApiResponse>).data,
+                        settings = settings ?: Settings()
+                    )
 
+                }
                 is ResultState.Error -> ErrorScreen((weatherState as ResultState.Error).exception.message)
                 ResultState.Empty -> EmptyScreen()
             }
         }
+
     }
 }
 
@@ -247,8 +267,7 @@ fun WeatherDetailItem(title: String, value: String) {
                 else -> painterResource(id = R.drawable.weather_ic)
             },
             contentDescription = title,
-            modifier = Modifier.size(24.dp),
-            tint = MaterialTheme.colorScheme.primary
+            modifier = Modifier.size(26.dp),
         )
         Spacer(modifier = Modifier.height(4.dp))
         Text(
@@ -372,12 +391,12 @@ fun EmptyScreen() {
         Spacer(modifier = Modifier
             .height(16.dp)
             .padding(16.dp))
-        Button(onClick = {
-            LocationTracker.getInstance(context).getLocationUpdates()
-
-        }) {
-            Text("Refresh")
-        }
+//        Button(onClick = {
+//            LocationTracker.getInstance(context).getLocationUpdates()
+//
+//        }) {
+//            Text("Refresh")
+//        }
     }
 }
 
@@ -394,11 +413,11 @@ fun ErrorScreen(message: String?) {
             color = MaterialTheme.colorScheme.error,
             style = MaterialTheme.typography.bodyLarge
         )
-        Button(onClick = {
-            LocationTracker.getInstance(context).getLocationUpdates()
-
-        }) {
-            Text("Refresh")
-        }
+//        Button(onClick = {
+//            LocationTracker.getInstance(context).getLocationUpdates()
+//
+//        }) {
+//            Text("Refresh")
+//        }
     }
 }

@@ -25,6 +25,8 @@ fun FavoritesScreen(
 ) {
     val favorites by viewModel.favorites.collectAsState()
     val selectedWeather by viewModel.selectedWeather.collectAsState()
+    var showDeleteDialog by remember { mutableStateOf<FavoriteEntity?>(null) }
+
 
     Scaffold(
         floatingActionButton = {
@@ -34,17 +36,18 @@ fun FavoritesScreen(
                     contentDescription = "Add location"
                 )
             }
-        }
+        },
+      topBar = { TopAppBar(
+          title = {Text("Favorite Locations")  }
+      )
+          },
+
     ) { padding ->
         Box(modifier = Modifier
             .fillMaxSize()
             .padding(padding)) {
             Column(modifier = Modifier.fillMaxSize()) {
-                Text(
-                    text = "Favorite Locations",
-                    style = MaterialTheme.typography.headlineMedium,
-                    modifier = Modifier.padding(16.dp)
-                )
+
 
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
@@ -53,7 +56,7 @@ fun FavoritesScreen(
                     items(favorites) { favorite ->
                         FavoriteItem(
                             favorite = favorite,
-                            onDelete = { viewModel.removeFavorite(favorite) },
+                            onDelete = { showDeleteDialog = favorite },
                             onClick = { onNavigateToDetail(favorite.lat, favorite.lon) }
                         )
                     }
@@ -72,9 +75,40 @@ fun FavoritesScreen(
                     // Show error message
                 }
 
-                else -> {}
+                else -> {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(padding),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text("No Favorites added yet")
+                    }
+                }
             }
         }
+    }
+    showDeleteDialog?.let { favorite ->
+        AlertDialog(
+            onDismissRequest = { showDeleteDialog = null },
+            title = { Text("Delete Location") },
+            text = { Text("Are you sure you want to delete ${favorite.cityName} from favorites?") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        viewModel.removeFavorite(favorite)
+                        showDeleteDialog = null
+                    }
+                ) {
+                    Text("Delete")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDeleteDialog = null }) {
+                    Text("Cancel")
+                }
+            }
+        )
     }
 }
 

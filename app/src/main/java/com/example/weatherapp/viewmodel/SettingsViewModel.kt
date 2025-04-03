@@ -4,6 +4,7 @@ import android.content.res.Configuration
 import androidx.compose.ui.text.intl.Locale
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.example.weatherapp.LocationTracker
 import com.example.weatherapp.ResultState
 import com.example.weatherapp.data.SettingsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -46,6 +47,8 @@ class SettingsViewModel(private val repository: SettingsRepository) : ViewModel(
             _settingsState.value = ResultState.Error(e)
         }
     }
+
+
 
     fun updateTemperatureUnit(unit: TemperatureUnit) {
         try {

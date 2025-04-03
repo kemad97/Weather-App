@@ -21,7 +21,12 @@ fun SettingsScreen(
 ) {
     val settingsState by viewModel.settingsState.collectAsState()
 
-    Scaffold { padding ->
+    Scaffold (
+        topBar = { TopAppBar(
+            title = {Text("Settings")  }
+        )
+        }
+    ){ padding ->
         when (settingsState) {
             is ResultState.Loading -> LoadingScreen()
             is ResultState.Success -> {
