@@ -43,12 +43,6 @@ class LocationTracker(private val context: Context) {
     @SuppressLint("MissingPermission")
     fun getLocationUpdates() {
 
-//        fusedLocationClient.lastLocation.addOnSuccessListener { location ->
-//            location?.let {
-//                myLocation.value = Pair(it.latitude, it.longitude)
-//                locationPreferences.saveLastLocation(it.latitude,it.longitude)
-//            }
-//        }
         fusedLocationClient.lastLocation.addOnSuccessListener { location ->
             location?.let {
                 val newLocation = Pair(it.latitude, it.longitude)
@@ -60,7 +54,7 @@ class LocationTracker(private val context: Context) {
             }
         }
 
-        val locRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 5000)
+        val locRequest = LocationRequest.Builder(Priority.PRIORITY_BALANCED_POWER_ACCURACY, 5000)
             .setMinUpdateDistanceMeters(1000.0F)
             .setMinUpdateIntervalMillis(2000)
             .build()

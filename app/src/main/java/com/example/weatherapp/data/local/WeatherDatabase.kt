@@ -1,12 +1,9 @@
-package com.example.weatherapp.data
+package com.example.weatherapp.data.local
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.example.weatherapp.data.local.AlertEntity
-import com.example.weatherapp.data.local.FavoriteEntity
-import com.example.weatherapp.data.local.FavoritesAndAlertsDao
 
 @Database(
     entities = [

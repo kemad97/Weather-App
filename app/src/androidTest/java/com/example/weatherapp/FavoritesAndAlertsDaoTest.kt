@@ -1,11 +1,10 @@
 package com.example.weatherapp
 
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
-import com.example.weatherapp.data.WeatherDatabase
+import com.example.weatherapp.data.local.WeatherDatabase
 import com.example.weatherapp.data.local.FavoriteEntity
 import com.example.weatherapp.data.local.FavoritesAndAlertsDao
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -15,7 +14,6 @@ import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.`is`
 import org.junit.After
 import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 

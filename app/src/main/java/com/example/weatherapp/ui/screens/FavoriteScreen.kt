@@ -10,6 +10,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.weatherapp.ResultState
 import com.example.weatherapp.data.local.FavoriteEntity
@@ -43,54 +44,42 @@ fun FavoritesScreen(
           },
 
     ) { padding ->
+
         Box(modifier = Modifier
             .fillMaxSize()
             .padding(padding)) {
-            Column(modifier = Modifier.fillMaxSize()) {
+            Column(modifier = Modifier.fillMaxSize()
+            ) {
 
-
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(16.dp)
-                ) {
-                    items(favorites) { favorite ->
-                        FavoriteItem(
-                            favorite = favorite,
-                            onDelete = { showDeleteDialog = favorite },
-                            onClick = { onNavigateToDetail(favorite.lat, favorite.lon) }
-                        )
-                    }
-                }
-            }
-
-            when (selectedWeather) {
-                is ResultState.Loading -> LoadingIndicator()
-                is ResultState.Success -> {
-                    val weatherData = (selectedWeather as ResultState.Success).data
-                    // Display weather details in a dialog or expanded card
-                }
-
-                is ResultState.Error -> {
-                    val error = (selectedWeather as ResultState.Error).exception.message
-                    // Show error message
-                }
-
-                else -> {
+                if (favorites.isEmpty()) {
                     Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(padding),
+                        modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
                         Text("No Favorites added yet")
                     }
+                } else {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(16.dp)
+                    ) {
+                        items(favorites) { favorite ->
+                            FavoriteItem(
+                                favorite = favorite,
+                                onDelete = { showDeleteDialog = favorite },
+                                onClick = { onNavigateToDetail(favorite.lat, favorite.lon) }
+                            )
+                        }
+                    }
                 }
             }
+
         }
     }
     showDeleteDialog?.let { favorite ->
         AlertDialog(
-            onDismissRequest = { showDeleteDialog = null },
+            containerColor = Color.DarkGray,
+                    onDismissRequest = { showDeleteDialog = null },
             title = { Text("Delete Location") },
             text = { Text("Are you sure you want to delete ${favorite.cityName} from favorites?") },
             confirmButton = {
@@ -152,12 +141,3 @@ fun FavoriteItem(
     }
 }
 
-@Composable
-fun LoadingIndicator() {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        CircularProgressIndicator()
-    }
-}

@@ -5,7 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.lifecycle.ViewModelProvider
 import com.example.weatherapp.data.SettingsRepositoryImpl
-import com.example.weatherapp.data.WeatherDatabase
+import com.example.weatherapp.data.local.WeatherDatabase
 import com.example.weatherapp.data.WeatherRepository
 import com.example.weatherapp.data.local.LocalDataSourceImpl
 import com.example.weatherapp.ui.theme.WeatherAppTheme

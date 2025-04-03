@@ -1,15 +1,15 @@
 <resources>
     <string name="app_name">Weather App</string>
-    <string name="app_name_arabic">تطبيق الطقس</string>
-    <string name="hourly_forecast">التوقعات بالساعة</string>
-    <string name="daily_forecast">توقعات 7 أيام</string>
-    <string name="humidity">الرطوبة</string>
-    <string name="wind">الرياح</string>
-    <string name="pressure">الضغط</string>
-    <string name="settings">الإعدادات</string>
-    <string name="location_method">طريقة تحديد الموقع</string>
-    <string name="use_gps">استخدام GPS</string>
-    <string name="temperature_unit">وحدة درجة الحرارة</string>
-    <string name="wind_speed_unit">وحدة سرعة الرياح</string>
-    <string name="language">اللغة</string>
+    <string name="humidity">Humidity</string>
+    <string name="wind">Wind</string>
+    <string name="pressure">Pressure</string>
+    <string name="_7_day_forecast">5-Day Forecast</string>
+    <string name="rain">rain</string>
+    <string name="sun">sun</string>
+    <string name="snow">snow</string>
+    <string name="an_error_occurred">An error occurred</string>
+    <string name="c">°C</string>
+    <string name="f">°F</string>
+    <string name="k">K</string>
+
 </resources>

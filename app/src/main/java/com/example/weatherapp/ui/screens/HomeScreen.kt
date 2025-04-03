@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -79,7 +80,7 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel()) {
 
     }
 }
-
+@Preview (showSystemUi = true)
 @Composable
 fun WeatherScreen(apiResponse: ApiResponse, settings: Settings?) {
     val cityName = apiResponse.city?.name ?: "Unknown"
@@ -91,11 +92,14 @@ fun WeatherScreen(apiResponse: ApiResponse, settings: Settings?) {
     val windSpeed = apiResponse.list?.firstOrNull()?.wind?.speed?.toString() ?: "--"
     val pressure = apiResponse.list?.firstOrNull()?.main?.pressure?.toString() ?: "--"
 
+    val tempMax = apiResponse.list?.firstOrNull()?.main?.tempMax?.toString() ?: "--"
+    val tempMin = apiResponse.list?.firstOrNull()?.main?.tempMin?.toString() ?: "--"
+
     val tempUnit = when (settings?.temperatureUnit) {
-        TemperatureUnit.CELSIUS -> "°C"
-        TemperatureUnit.FAHRENHEIT -> "°F"
-        TemperatureUnit.KELVIN -> "K"
-        null -> "°C"
+        TemperatureUnit.CELSIUS -> stringResource(R.string.c)
+        TemperatureUnit.FAHRENHEIT -> stringResource(R.string.f)
+        TemperatureUnit.KELVIN -> stringResource(R.string.k)
+        null -> stringResource(R.string.c)
     }
 
     val windUnit = when (settings?.windSpeedUnit) {
@@ -140,6 +144,25 @@ fun WeatherScreen(apiResponse: ApiResponse, settings: Settings?) {
                 Text(text = "$temperature $tempUnit", fontSize = 64.sp)
                 Text(text = description, fontSize = 22.sp)
                 Spacer(modifier = Modifier.height(16.dp))
+
+                //h l temp
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = "H: $tempMax$tempUnit",
+                        fontSize = 16.sp,
+                        modifier = Modifier.padding(end = 8.dp)
+                    )
+                    Text(
+                        text = "L: $tempMin$tempUnit",
+                        fontSize = 16.sp,
+                        modifier = Modifier.padding(start = 8.dp)
+                    )
+                }
             }
             // Weather details
             item {
@@ -147,9 +170,9 @@ fun WeatherScreen(apiResponse: ApiResponse, settings: Settings?) {
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                WeatherDetailItem("Humidity", "$humidity%")
-                WeatherDetailItem("Wind", "$windSpeed $windUnit")
-                WeatherDetailItem("Pressure", "$pressure hPa")
+                WeatherDetailItem(stringResource(R.string.humidity), "$humidity%")
+                WeatherDetailItem(stringResource(R.string.wind), "$windSpeed $windUnit")
+                WeatherDetailItem(stringResource(R.string.pressure), "$pressure hPa")
             }
                 }
 
@@ -176,25 +199,19 @@ fun WeatherScreen(apiResponse: ApiResponse, settings: Settings?) {
                 // 5 day forecase
                 Spacer(modifier = Modifier.height(20.dp))
                 Text(
-                    text = "7-Day Forecast",
+                    text = stringResource(R.string._7_day_forecast),
                     fontSize = 20.sp,
                     style = MaterialTheme.typography.titleLarge,
                     modifier = Modifier.padding(horizontal = 16.dp)
                 )
             }
 
-//            LazyColumn(
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .fillMaxSize()
-//                    .padding(vertical = 8.dp),
-//                verticalArrangement = Arrangement.spacedBy(4.dp)
-//            ) {
+            // Daily forecast
                 val dailyForecasts = apiResponse.list
                     ?.filterNotNull()
                     ?.groupBy { it.dtTxt?.substring(0, 10) }
                     ?.map { it.value.first() }
-                    ?.take(5)
+                    ?.take(8)
                     ?: emptyList()
 
                 items(dailyForecasts) { forecast ->
@@ -300,7 +317,7 @@ fun WeatherDetailItem(title: String, value: String) {
 fun getWeatherIconByTemp(temp: String): Painter {
     val temperature = temp.replace("°C", "").toFloatOrNull() ?: 0f
     return when {
-        temperature >= 30 -> painterResource(id = R.drawable.ic_sunny)
+        temperature >= 35 -> painterResource(id = R.drawable.ic_sunny)
         temperature >= 20 -> painterResource(id = R.drawable.weather_ic)
         temperature >= 10 -> painterResource(id = R.drawable.ic_haze)
         temperature >= 0 -> painterResource(id = R.drawable.ic_snow)
@@ -343,14 +360,14 @@ fun getWeatherIcon(description: String): Painter {
             ignoreCase = true
         ) -> painterResource(id = R.drawable.weather_ic)
 
-        description.contains("rain", ignoreCase = true) -> painterResource(id = R.drawable.ic_rain)
-        description.contains("sun", ignoreCase = true) -> painterResource(id = R.drawable.ic_sunny)
+        description.contains(stringResource(R.string.rain), ignoreCase = true) -> painterResource(id = R.drawable.ic_rain)
+        description.contains(stringResource(R.string.sun), ignoreCase = true) -> painterResource(id = R.drawable.ic_sunny)
         description.contains(
             "clear",
             ignoreCase = true
         ) -> painterResource(id = R.drawable.ic_sunny)
 
-        description.contains("snow", ignoreCase = true) -> painterResource(id = R.drawable.ic_snow)
+        description.contains(stringResource(R.string.snow), ignoreCase = true) -> painterResource(id = R.drawable.ic_snow)
 
         else -> painterResource(id = R.drawable.weather_ic)
     }
@@ -388,15 +405,11 @@ fun EmptyScreen() {
         contentAlignment = Alignment.Center
     ) {
 
-        Spacer(modifier = Modifier
-            .height(16.dp)
-            .padding(16.dp))
-//        Button(onClick = {
-//            LocationTracker.getInstance(context).getLocationUpdates()
-//
-//        }) {
-//            Text("Refresh")
-//        }
+        Spacer(
+            modifier = Modifier
+                .height(16.dp)
+                .padding(16.dp)
+        )
     }
 }
 
@@ -409,7 +422,7 @@ fun ErrorScreen(message: String?) {
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = message ?: "An error occurred",
+            text = message ?: stringResource(R.string.an_error_occurred),
             color = MaterialTheme.colorScheme.error,
             style = MaterialTheme.typography.bodyLarge
         )
