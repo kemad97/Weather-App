@@ -1,3 +1,5 @@
+@file:Suppress("PreviewAnnotationInFunctionWithParameters")
+
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -13,7 +15,10 @@ import com.example.weatherapp.viewmodel.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsScreen(viewModel: SettingsViewModel) {
+fun SettingsScreen(
+    viewModel: SettingsViewModel,
+    onNavigateToMap: () -> Unit
+) {
     val settingsState by viewModel.settingsState.collectAsState()
 
     Scaffold { padding ->
@@ -23,7 +28,12 @@ fun SettingsScreen(viewModel: SettingsViewModel) {
                 val settings = (settingsState as ResultState.Success<Settings>).data
                 SettingsContent(
                     settings = settings,
-                    onLocationMethodChange = viewModel::updateLocationMethod,
+                    onLocationMethodChange = { method ->
+                        viewModel.updateLocationMethod(method)
+                        if (method == LocationMethod.MAP) {
+                            onNavigateToMap()
+                        }
+                    },
                     onTemperatureUnitChange = viewModel::updateTemperatureUnit,
                     onWindSpeedUnitChange = viewModel::updateWindSpeedUnit,
                     onLanguageChange = viewModel::updateLanguage,

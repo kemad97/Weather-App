@@ -39,6 +39,7 @@ import com.example.weatherapp.ui.screens.AlertsScreen
 import com.example.weatherapp.ui.screens.FavoritesScreen
 import com.example.weatherapp.ui.screens.HomeScreen
 import com.example.weatherapp.ui.screens.MapScreen
+import com.example.weatherapp.ui.screens.MapScreenSettings
 import com.example.weatherapp.viewmodel.AlertsViewModel
 import com.example.weatherapp.viewmodel.FavoriteViewModel
 import com.example.weatherapp.viewmodel.FavoriteViewModelFactory
@@ -56,6 +57,8 @@ sealed class Screen(
     data object Alerts : Screen("alerts", R.drawable.ic_alerts, "Alerts")
     data object Settings : Screen("settings", R.drawable.ic_settings, "Settings")
     data object Map : Screen("map", 0, "")
+    data object MapSettings : Screen("map/settings", 0, "")
+
 
     data object FavoriteDetail : Screen("favorite_detail/{lat}/{lon}", 0, "") {
         fun createRoute(lat: Double, lon: Double) = "favorite_detail/$lat/$lon"
@@ -181,6 +184,16 @@ fun MainScreen(
                 )
             }
 
+            composable(Screen.MapSettings.route) {
+                val settingsViewModel = viewModel<SettingsViewModel>(
+                    factory = SettingsViewModelFactory(settingsRepository)
+                )
+                MapScreenSettings(
+                    settingsViewModel = settingsViewModel,
+                    onNavigateBack = { navController.navigateUp() }
+                )
+            }
+
             composable(
                 route = Screen.FavoriteDetail.route,
                 arguments = listOf(
@@ -211,7 +224,10 @@ fun MainScreen(
                 val settingsViewModel = viewModel<SettingsViewModel>(
                     factory = SettingsViewModelFactory(settingsRepository)
                 )
-                SettingsScreen(viewModel = settingsViewModel)
+                SettingsScreen(
+                    viewModel = settingsViewModel,
+                    onNavigateToMap = { navController.navigate(Screen.Map.route) }
+                )
             }
 
 

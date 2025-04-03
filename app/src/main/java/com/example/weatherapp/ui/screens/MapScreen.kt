@@ -159,7 +159,7 @@ fun MapViewContainer(
     }
 }
 
-private fun getCityName(context: Context, lat: Double, lon: Double): String {
+fun getCityName(context: Context, lat: Double, lon: Double): String {
     val geocoder = android.location.Geocoder(context)
     return try {
         @Suppress("DEPRECATION")
