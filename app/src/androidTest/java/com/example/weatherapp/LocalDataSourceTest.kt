@@ -13,6 +13,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.hamcrest.Matchers.`is`
+import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -32,6 +33,11 @@ class LocalDataSourceTest {
         ).allowMainThreadQueries().build()
 
         localDataSource = LocalDataSourceImpl(database.favoritesAndAlertsDao())
+    }
+
+    @After
+    fun cleanup() {
+        database.close()
     }
 
     @Test

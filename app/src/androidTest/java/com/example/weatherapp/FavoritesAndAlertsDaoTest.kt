@@ -37,6 +37,10 @@ class FavoritesAndAlertsDaoTest {
         dao=database.favoritesAndAlertsDao()
     }
 
+    @After
+    fun cleanup() {
+        database.close()
+    }
 
     @Test
     fun insertFavoriteAndGet () = runTest {

@@ -14,35 +14,35 @@ import kotlinx.coroutines.flow.flow
 class WeatherRepository(
     private val localDataSource: LocalDataSource,
     private val remoteRepository: RemoteRepository = RemoteRepositoryImpl(WeatherApi.retrofitService)
-) {
+):IWeatherRepository {
 
-    fun fetchWeather(lat: Double, lon: Double, apiKey: String): Flow<ApiResponse> = flow {
+    override fun fetchWeather(lat: Double, lon: Double, apiKey: String): Flow<ApiResponse> = flow {
         val response = remoteRepository.getWeatherForecast(lat, lon, apiKey)
         emit(response)
     }
 
-    fun getAllFavorites(): Flow<List<FavoriteEntity>> {
+    override fun getAllFavorites(): Flow<List<FavoriteEntity>> {
         return localDataSource.getAllFavorites()
     }
 
-    suspend fun insertFavorite(favorite: FavoriteEntity) {
+    override suspend fun insertFavorite(favorite: FavoriteEntity) {
         localDataSource.insertFavorite(favorite)
     }
 
-    suspend fun deleteFavorite(favorite: FavoriteEntity) {
+    override suspend fun deleteFavorite(favorite: FavoriteEntity) {
         localDataSource.deleteFavorite(favorite)
     }
 
 
-    fun getAllAlerts(): Flow<List<AlertEntity>> {
+    override fun getAllAlerts(): Flow<List<AlertEntity>> {
         return localDataSource.getAllAlerts()
     }
 
-    suspend fun insertAlert(alert: AlertEntity) {
+    override suspend fun insertAlert(alert: AlertEntity) {
         localDataSource.insertAlert(alert)
     }
 
-    suspend fun deleteAlert(alert: AlertEntity) {
+    override suspend fun deleteAlert(alert: AlertEntity) {
         localDataSource.deleteAlert(alert)
     }
 
