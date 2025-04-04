@@ -1,16 +1,15 @@
 package com.example.weatherapp.data
 
 import android.content.SharedPreferences
-import androidx.work.impl.model.Preference
-import com.example.weatherapp.viewmodel.Language
-import com.example.weatherapp.viewmodel.LocationMethod
-import com.example.weatherapp.viewmodel.Settings
-import com.example.weatherapp.viewmodel.TemperatureUnit
-import com.example.weatherapp.viewmodel.WindSpeedUnit
+import com.example.weatherapp.settings.Language
+import com.example.weatherapp.settings.LocationMethod
+import com.example.weatherapp.settings.Settings
+import com.example.weatherapp.settings.TemperatureUnit
+import com.example.weatherapp.settings.WindSpeedUnit
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-class SettingsRepositoryImpl(private val preference: SharedPreferences) : SettingsRepository {
+class SettingsRepositoryImpl( val preference: SharedPreferences) : SettingsRepository {
 
     private val _settingsFlow = MutableStateFlow(
         Settings(
@@ -21,6 +20,8 @@ class SettingsRepositoryImpl(private val preference: SharedPreferences) : Settin
         )
     )
 
+
+
     override val settingsFlow: StateFlow<Settings> = _settingsFlow
 
     companion object {
@@ -29,6 +30,7 @@ class SettingsRepositoryImpl(private val preference: SharedPreferences) : Settin
         private const val PREF_WIND_SPEED_UNIT = "wind_speed_unit"
         private const val PREF_LANGUAGE = "language"
     }
+
 
 
     override fun getLocationMethod(): LocationMethod {

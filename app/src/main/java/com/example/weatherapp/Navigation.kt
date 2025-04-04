@@ -1,7 +1,7 @@
 package com.example.weatherapp
 
 import com.example.weatherapp.favorites.FavoriteDetailScreen
-import SettingsScreen
+import com.example.weatherapp.settings.SettingsScreen
 import android.content.Intent
 import android.provider.Settings
 import androidx.compose.foundation.layout.height
@@ -44,8 +44,8 @@ import com.example.weatherapp.alerts.AlertsViewModel
 import com.example.weatherapp.favorites.FavoriteViewModel
 import com.example.weatherapp.favorites.FavoriteViewModelFactory
 import com.example.weatherapp.home.HomeViewModel
-import com.example.weatherapp.viewmodel.SettingsViewModel
-import com.example.weatherapp.viewmodel.SettingsViewModelFactory
+import com.example.weatherapp.settings.SettingsViewModel
+import com.example.weatherapp.settings.SettingsViewModelFactory
 
 sealed class Screen(
     val route: String,

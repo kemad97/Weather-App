@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">تطبيق الطقس</string>
+    <string name="humidity">الرطوبة</string>
+    <string name="wind">الرياح</string>
+    <string name="pressure">الضغط الجوي</string>
+    <string name="_7_day_forecast">توقعات ٥ أيام</string>
+    <string name="rain">مطر</string>
+    <string name="sun">مشمس</string>
+    <string name="snow">ثلج</string>
+    <string name="an_error_occurred">حدث خطأ</string>
+    <string name="c">°م</string>
+    <string name="f">°ف</string>
+    <string name="k">ك</string>
+    <string name="m_s">م/ث</string>
+    <string name="mph">ميل/س</string>
+</resources>

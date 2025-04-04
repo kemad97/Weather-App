@@ -50,8 +50,8 @@ import com.example.weatherapp.home.HourlyWeatherItem
 import com.example.weatherapp.home.WeatherDetailItem
 import com.example.weatherapp.home.formatTime
 import com.example.weatherapp.home.getWeatherIcon
-import com.example.weatherapp.viewmodel.TemperatureUnit
-import com.example.weatherapp.viewmodel.WindSpeedUnit
+import com.example.weatherapp.settings.TemperatureUnit
+import com.example.weatherapp.settings.WindSpeedUnit
 import java.util.Date
 import java.util.Locale
 

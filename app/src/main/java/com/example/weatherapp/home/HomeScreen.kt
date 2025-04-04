@@ -32,9 +32,9 @@ import com.example.weatherapp.R
 import com.example.weatherapp.ResultState
 import com.example.weatherapp.model.ApiResponse
 import com.example.weatherapp.model.ListItem
-import com.example.weatherapp.viewmodel.Settings
-import com.example.weatherapp.viewmodel.TemperatureUnit
-import com.example.weatherapp.viewmodel.WindSpeedUnit
+import com.example.weatherapp.settings.Settings
+import com.example.weatherapp.settings.TemperatureUnit
+import com.example.weatherapp.settings.WindSpeedUnit
 import java.util.Date
 import java.util.Locale
 

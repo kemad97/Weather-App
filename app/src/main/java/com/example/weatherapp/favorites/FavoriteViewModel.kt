@@ -11,10 +11,9 @@ import com.example.weatherapp.data.SettingsRepository
 import com.example.weatherapp.data.WeatherRepository
 import com.example.weatherapp.data.local.FavoriteEntity
 import com.example.weatherapp.model.ApiResponse
-import com.example.weatherapp.viewmodel.LocationMethod
-import com.example.weatherapp.viewmodel.Settings
-import com.example.weatherapp.viewmodel.TemperatureUnit
-import com.example.weatherapp.viewmodel.WindSpeedUnit
+import com.example.weatherapp.settings.Settings
+import com.example.weatherapp.settings.TemperatureUnit
+import com.example.weatherapp.settings.WindSpeedUnit
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest

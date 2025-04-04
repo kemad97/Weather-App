@@ -20,8 +20,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.weatherapp.LocationTracker
 import com.example.weatherapp.R
-import com.example.weatherapp.viewmodel.LocationMethod
-import com.example.weatherapp.viewmodel.SettingsViewModel
+import com.example.weatherapp.settings.LocationMethod
+import com.example.weatherapp.settings.SettingsViewModel
 import kotlinx.coroutines.delay
 import org.osmdroid.config.Configuration
 

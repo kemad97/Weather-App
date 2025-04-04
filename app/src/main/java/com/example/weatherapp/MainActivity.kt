@@ -1,5 +1,6 @@
 package com.example.weatherapp
 
+import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -11,6 +12,8 @@ import com.example.weatherapp.data.local.LocalDataSourceImpl
 import com.example.weatherapp.ui.theme.WeatherAppTheme
 import com.example.weatherapp.home.HomeViewModel
 import com.example.weatherapp.home.HomeViewModelFactory
+import java.util.*
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -19,11 +22,14 @@ class MainActivity : ComponentActivity() {
 
         val database = WeatherDatabase.getInstance(applicationContext)
         val localDataSource = LocalDataSourceImpl(database.favoritesAndAlertsDao())
-        val repository = WeatherRepository.getInstance(localDataSource)
+        val sharedPreferences = getSharedPreferences("weather_settings", MODE_PRIVATE)
+        val repository = WeatherRepository.getInstance(localDataSource, sharedPreferences)
         val locationTracker = LocationTracker.getInstance(this)
 
-        val sharedPreferences = getSharedPreferences("weather_settings", MODE_PRIVATE)
         val settingsRepository = SettingsRepositoryImpl(sharedPreferences)
+
+        applyLanguage(settingsRepository.getLanguage())
+
 
         val viewModel = ViewModelProvider(
             this,
@@ -38,6 +44,16 @@ class MainActivity : ComponentActivity() {
                 MainScreen(viewModel, repository, settingsRepository)
             }
         }
-
     }
+
+        fun applyLanguage(language: String) {
+            val locale = Locale(language)
+            Locale.setDefault(locale)
+            val config = Configuration()
+            config.setLocale(locale)
+            resources.updateConfiguration(config, resources.displayMetrics)
+        }
+
+
+
 }

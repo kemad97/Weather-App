@@ -1,5 +1,6 @@
 package com.example.weatherapp.data
 
+import android.content.SharedPreferences
 import com.example.weatherapp.data.local.FavoriteEntity
 import com.example.weatherapp.data.local.LocalDataSource
 import com.example.weatherapp.data.local.AlertEntity
@@ -13,7 +14,9 @@ import kotlinx.coroutines.flow.flow
 
 class WeatherRepository(
     private val localDataSource: LocalDataSource,
-    private val remoteRepository: RemoteRepository = RemoteRepositoryImpl(WeatherApi.retrofitService)
+    private val sharedPreferences: SharedPreferences,
+    private val remoteRepository: RemoteRepository = RemoteRepositoryImpl(
+        WeatherApi.retrofitService, sharedPreferences)
 ):IWeatherRepository {
 
     override fun fetchWeather(lat: Double, lon: Double, apiKey: String): Flow<ApiResponse> = flow {
@@ -50,9 +53,9 @@ class WeatherRepository(
         @Volatile
         private var instance: WeatherRepository? = null
 
-        fun getInstance(localDataSource: LocalDataSource): WeatherRepository {
+        fun getInstance(localDataSource: LocalDataSource ,sharedPreferences: SharedPreferences): WeatherRepository {
             return instance ?: synchronized(this) {
-                instance ?: WeatherRepository(localDataSource).also { instance = it }
+                instance ?: WeatherRepository(localDataSource, sharedPreferences  ).also { instance = it }
             }
         }
     }

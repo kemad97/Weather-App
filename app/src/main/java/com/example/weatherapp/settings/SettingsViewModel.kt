@@ -1,10 +1,7 @@
-package com.example.weatherapp.viewmodel
+package com.example.weatherapp.settings
 
-import android.content.res.Configuration
-import androidx.compose.ui.text.intl.Locale
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.weatherapp.LocationTracker
 import com.example.weatherapp.ResultState
 import com.example.weatherapp.data.SettingsRepository
 import kotlinx.coroutines.flow.MutableStateFlow

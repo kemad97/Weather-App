@@ -1,10 +1,10 @@
 package com.example.weatherapp
 
 import com.example.weatherapp.data.SettingsRepository
-import com.example.weatherapp.viewmodel.Language
-import com.example.weatherapp.viewmodel.Settings
-import com.example.weatherapp.viewmodel.TemperatureUnit
-import com.example.weatherapp.viewmodel.WindSpeedUnit
+import com.example.weatherapp.settings.Language
+import com.example.weatherapp.settings.Settings
+import com.example.weatherapp.settings.TemperatureUnit
+import com.example.weatherapp.settings.WindSpeedUnit
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 

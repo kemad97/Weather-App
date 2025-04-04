@@ -1,5 +1,7 @@
 @file:Suppress("PreviewAnnotationInFunctionWithParameters")
 
+package com.example.weatherapp.settings
+
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -11,7 +13,6 @@ import com.example.weatherapp.ResultState
 import com.example.weatherapp.home.EmptyScreen
 import com.example.weatherapp.home.ErrorScreen
 import com.example.weatherapp.home.LoadingScreen
-import com.example.weatherapp.viewmodel.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
