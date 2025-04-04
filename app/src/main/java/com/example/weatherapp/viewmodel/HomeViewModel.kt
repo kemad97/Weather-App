@@ -92,21 +92,22 @@ class HomeViewModel(
             list = currentWeather.list?.map { item ->
                 item?.copy(
                     main = item.main?.copy(
-                        temp = item.main.temp?.let { temp ->
-                            String.format(
-                                "%.1f",
-                                convertTemperature(temp as Double, currentSettings.temperatureUnit)
-                            )
-                                .toDouble()
+                        temp = item.main.temp?.toString()?.toDoubleOrNull()?.let { temp ->
+                            convertTemperature(temp, currentSettings.temperatureUnit)
+                        },
+                        tempMin = item.main.tempMin?.toString()?.toDoubleOrNull()?.let { temp ->
+                            convertTemperature(temp, currentSettings.temperatureUnit)
+                        },
+                        tempMax = item.main.tempMax?.toString()?.toDoubleOrNull()?.let { temp ->
+                            convertTemperature(temp, currentSettings.temperatureUnit)
+                        },
+                        feelsLike = item.main.feelsLike?.toString()?.toDoubleOrNull()?.let { temp ->
+                            convertTemperature(temp, currentSettings.temperatureUnit)
                         }
                     ),
                     wind = item.wind?.copy(
-                        speed = item.wind.speed?.let { speed ->
-                            String.format(
-                                "%.1f",
-                                convertWindSpeed(speed as Double, currentSettings.windSpeedUnit)
-                            )
-                                .toDouble()
+                        speed = item.wind.speed?.toString()?.toDoubleOrNull()?.let { speed ->
+                            convertWindSpeed(speed, currentSettings.windSpeedUnit)
                         }
                     )
                 )
@@ -114,6 +115,7 @@ class HomeViewModel(
         )
         _weatherData.value = ResultState.Success(convertedResponse)
     }
+
 
     fun observeLocationAndFetchWeather() {
         viewModelScope.launch {
@@ -134,6 +136,7 @@ class HomeViewModel(
 
                 repository.fetchWeather(lat, lon, apiKey).collectLatest { response ->
                     _weatherData.value = ResultState.Success(response)
+                    convertWeatherData()
                     Log.d("WeatherData", " API Response: $response")
                     Log.d("WeatherData", "Received: $response + ${response.city?.name}")
 
