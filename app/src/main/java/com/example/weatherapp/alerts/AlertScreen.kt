@@ -1,4 +1,4 @@
-package com.example.weatherapp.ui.screens
+package com.example.weatherapp.alerts
 
 import android.annotation.SuppressLint
 import android.app.AlarmManager
@@ -24,7 +24,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
-import androidx.compose.material3.AlertDialogDefaults.containerColor
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -35,7 +34,6 @@ import androidx.compose.ui.unit.dp
 import com.example.weatherapp.AlarmReceiver
 import com.example.weatherapp.data.local.AlertType
 import com.example.weatherapp.data.local.AlertEntity
-import com.example.weatherapp.viewmodel.AlertsViewModel
 import java.text.SimpleDateFormat
 import java.util.*
 

@@ -1,5 +1,6 @@
-package com.example.weatherapp.viewmodel
+package com.example.weatherapp.favorites
 
+import android.annotation.SuppressLint
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -7,14 +8,14 @@ import androidx.lifecycle.viewModelScope
 import com.example.weatherapp.BuildConfig
 import com.example.weatherapp.ResultState
 import com.example.weatherapp.data.SettingsRepository
-import com.example.weatherapp.data.SettingsRepositoryImpl
 import com.example.weatherapp.data.WeatherRepository
 import com.example.weatherapp.data.local.FavoriteEntity
 import com.example.weatherapp.model.ApiResponse
+import com.example.weatherapp.viewmodel.Settings
+import com.example.weatherapp.viewmodel.TemperatureUnit
+import com.example.weatherapp.viewmodel.WindSpeedUnit
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class FavoriteViewModel(
@@ -30,15 +31,15 @@ class FavoriteViewModel(
     private val _settings = MutableStateFlow<Settings?>(null)
     val settings: StateFlow<Settings?> = _settings
 
-    private var originalResponse: ApiResponse? = null
 
     private var currentTempUnit = TemperatureUnit.CELSIUS
     private var currentWindUnit = WindSpeedUnit.METER_PER_SEC
 
 
     init {
-        getFavorites()
         observeSettings()
+        getFavorites()
+
 
     }
 
@@ -49,18 +50,16 @@ class FavoriteViewModel(
                 currentTempUnit = _settings.value?.temperatureUnit ?: TemperatureUnit.CELSIUS
                 currentWindUnit = _settings.value?.windSpeedUnit ?: WindSpeedUnit.METER_PER_SEC
 
-                _settings.value = Settings(
-                    locationMethod = newSettings.locationMethod,
-                    temperatureUnit = newSettings.temperatureUnit,
-                    windSpeedUnit = newSettings.windSpeedUnit,
-                    language = newSettings.language
-                )
+                _settings.value = newSettings
+
                 convertWeatherData()
             }
         }
     }
 
-    private fun convertWeatherData() {
+
+    @SuppressLint("DefaultLocale")
+    fun convertWeatherData() {
         val currentWeather = (_selectedWeather.value as? ResultState.Success)?.data ?: return
         val currentSettings = _settings.value ?: return
 
@@ -68,13 +67,22 @@ class FavoriteViewModel(
             list = currentWeather.list?.map { item ->
                 item?.copy(
                     main = item.main?.copy(
-                        temp = item.main.temp?.let { temp ->
-                            convertTemperature(temp as Double, currentSettings.temperatureUnit)
+                        temp = item.main.temp?.toString()?.toDoubleOrNull()?.let { temp ->
+                            convertTemperature(temp, currentSettings.temperatureUnit)
+                        },
+                        tempMin = item.main.tempMin?.toString()?.toDoubleOrNull()?.let { temp ->
+                            convertTemperature(temp, currentSettings.temperatureUnit)
+                        },
+                        tempMax = item.main.tempMax?.toString()?.toDoubleOrNull()?.let { temp ->
+                            convertTemperature(temp, currentSettings.temperatureUnit)
+                        },
+                        feelsLike = item.main.feelsLike?.toString()?.toDoubleOrNull()?.let { temp ->
+                            convertTemperature(temp, currentSettings.temperatureUnit)
                         }
                     ),
                     wind = item.wind?.copy(
-                        speed = item.wind.speed?.let { speed ->
-                            convertWindSpeed(speed as Double, currentSettings.windSpeedUnit)
+                        speed = item.wind.speed?.toString()?.toDoubleOrNull()?.let { speed ->
+                            convertWindSpeed(speed, currentSettings.windSpeedUnit)
                         }
                     )
                 )
@@ -107,16 +115,12 @@ class FavoriteViewModel(
 
     fun getWeatherForLocation(lat: Double, lon: Double) {
         viewModelScope.launch {
-            _selectedWeather.value = ResultState.Loading
             try {
+                _selectedWeather.value = ResultState.Loading
                 repository.fetchWeather(lat, lon, BuildConfig.WEATHER_API_KEY)
-                    .catch { e ->
-                        Log.e("FavoriteViewModel", "Error fetching weather: ${e.message}")
-                        _selectedWeather.value = ResultState.Error(e)
-                    }
-                    .collectLatest { response ->
+
+                    .collect { response ->
                         Log.d("FavoriteViewModel", "Received weather data: $response")
-                        originalResponse = response
                         _selectedWeather.value = ResultState.Success(response)
                         convertWeatherData() // Convert using current settings
                     }

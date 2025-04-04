@@ -9,8 +9,8 @@ import com.example.weatherapp.data.local.WeatherDatabase
 import com.example.weatherapp.data.WeatherRepository
 import com.example.weatherapp.data.local.LocalDataSourceImpl
 import com.example.weatherapp.ui.theme.WeatherAppTheme
-import com.example.weatherapp.viewmodel.HomeViewModel
-import com.example.weatherapp.viewmodel.HomeViewModelFactory
+import com.example.weatherapp.home.HomeViewModel
+import com.example.weatherapp.home.HomeViewModelFactory
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -1,12 +1,9 @@
 package com.example.weatherapp
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.example.weatherapp.ResultState
 import com.example.weatherapp.data.WeatherRepository
 import com.example.weatherapp.data.SettingsRepository
 import com.example.weatherapp.data.local.FavoriteEntity
-import com.example.weatherapp.model.ApiResponse
-import com.example.weatherapp.model.City
-import com.example.weatherapp.viewmodel.FavoriteViewModel
+import com.example.weatherapp.favorites.FavoriteViewModel
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -14,7 +11,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.test.*
-import org.hamcrest.CoreMatchers.instanceOf
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.After

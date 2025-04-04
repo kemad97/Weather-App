@@ -11,5 +11,7 @@
     <string name="c">°C</string>
     <string name="f">°F</string>
     <string name="k">K</string>
+    <string name="m_s">m/s</string>
+    <string name="mph">mph</string>
 
 </resources>

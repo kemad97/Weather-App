@@ -1,4 +1,4 @@
-package com.example.weatherapp.ui.screens
+package com.example.weatherapp.favorites
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -12,9 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.example.weatherapp.ResultState
 import com.example.weatherapp.data.local.FavoriteEntity
-import com.example.weatherapp.viewmodel.FavoriteViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)

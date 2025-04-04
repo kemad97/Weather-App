@@ -1,6 +1,6 @@
 @file:Suppress("PreviewAnnotationInFunctionWithParameters")
 
-package com.example.weatherapp.ui.screens
+package com.example.weatherapp.home
 
 import android.icu.text.SimpleDateFormat
 import android.os.Build
@@ -28,12 +28,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
-import com.example.weatherapp.LocationTracker
 import com.example.weatherapp.R
 import com.example.weatherapp.ResultState
 import com.example.weatherapp.model.ApiResponse
 import com.example.weatherapp.model.ListItem
-import com.example.weatherapp.viewmodel.HomeViewModel
 import com.example.weatherapp.viewmodel.Settings
 import com.example.weatherapp.viewmodel.TemperatureUnit
 import com.example.weatherapp.viewmodel.WindSpeedUnit
@@ -55,7 +53,10 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel()) {
             TopAppBar(
                 title = { Text("Weather Forecast") },
                 actions = {
-                    IconButton(onClick = { viewModel.observeLocationAndFetchWeather() }) {
+                    IconButton(onClick = {
+                        viewModel.observeSettings()
+                        viewModel.observeLocationAndFetchWeather()
+                    }) {
                         Icon(Icons.Default.Refresh, "Refresh")
                     }
                 }
@@ -81,148 +82,6 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel()) {
     }
 }
 
-//@Preview(showSystemUi = true)
-//@Composable
-//fun WeatherScreen(apiResponse: ApiResponse, settings: Settings?) {
-//    val cityName = apiResponse.city?.name ?: "Unknown"
-//    val country = apiResponse.city?.country ?: ""
-//    val temperature = apiResponse.list?.firstOrNull()?.main?.temp?.toString() ?: "--"
-//    val description =
-//        apiResponse.list?.firstOrNull()?.weather?.firstOrNull()?.description ?: "Unknown"
-//    val humidity = apiResponse.list?.firstOrNull()?.main?.humidity?.toString() ?: "--"
-//    val windSpeed = apiResponse.list?.firstOrNull()?.wind?.speed?.toString() ?: "--"
-//    val pressure = apiResponse.list?.firstOrNull()?.main?.pressure?.toString() ?: "--"
-//
-//    val tempMax = apiResponse.list?.firstOrNull()?.main?.tempMax?.toString() ?: "--"
-//    val tempMin = apiResponse.list?.firstOrNull()?.main?.tempMin?.toString() ?: "--"
-//
-//    val tempUnit = when (settings?.temperatureUnit) {
-//        TemperatureUnit.CELSIUS -> stringResource(R.string.c)
-//        TemperatureUnit.FAHRENHEIT -> stringResource(R.string.f)
-//        TemperatureUnit.KELVIN -> stringResource(R.string.k)
-//        null -> stringResource(R.string.c)
-//    }
-//
-//    val windUnit = when (settings?.windSpeedUnit) {
-//        WindSpeedUnit.METER_PER_SEC -> "m/s"
-//        WindSpeedUnit.MILES_PER_HOUR -> "mph"
-//        null -> "m/s"
-//
-//    }
-//
-//
-//    Box(
-//        modifier = Modifier
-//            .fillMaxSize()
-//            .systemBarsPadding()
-//    ) {
-//        AsyncImage(
-//            //    model = getWeatherBackground(description),
-//            model = R.drawable.beautifulmountains,
-//            contentDescription = "Weather Background",
-//            contentScale = ContentScale.FillBounds,
-//            modifier = Modifier
-//                .fillMaxSize()
-//        )
-//
-//        LazyColumn(
-//            modifier = Modifier
-//                .fillMaxSize()
-//                .padding(16.dp),
-//            horizontalAlignment = Alignment.CenterHorizontally
-//        ) {
-//            item {
-//                Text(text = "$cityName, $country", fontSize = 28.sp, textAlign = TextAlign.Center)
-//                Spacer(modifier = Modifier.height(8.dp))
-//
-//                Image(
-//                    painter = getWeatherIcon(description),
-//                    contentDescription = "Weather Icon",
-//                    modifier = Modifier.size(100.dp)
-//                )
-//
-//                Spacer(modifier = Modifier.height(8.dp))
-//                Text(text = "$temperature $tempUnit", fontSize = 64.sp)
-//                Text(text = description, fontSize = 22.sp)
-//                Spacer(modifier = Modifier.height(16.dp))
-//
-//                //h l temp
-//                Row(
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .padding(horizontal = 16.dp),
-//                    horizontalArrangement = Arrangement.Center
-//                ) {
-//                    Text(
-//                        text = "H: $tempMax$tempUnit",
-//                        fontSize = 16.sp,
-//                        modifier = Modifier.padding(end = 8.dp)
-//                    )
-//                    Text(
-//                        text = "L: $tempMin$tempUnit",
-//                        fontSize = 16.sp,
-//                        modifier = Modifier.padding(start = 8.dp)
-//                    )
-//                }
-//            }
-//            // Weather details
-//            item {
-//                Row(
-//                    modifier = Modifier.fillMaxWidth(),
-//                    horizontalArrangement = Arrangement.SpaceEvenly
-//                ) {
-//                    WeatherDetailItem(stringResource(R.string.humidity), "$humidity%")
-//                    WeatherDetailItem(stringResource(R.string.wind), "$windSpeed $windUnit")
-//                    WeatherDetailItem(stringResource(R.string.pressure), "$pressure hPa")
-//                }
-//            }
-//
-//            // hourly forecase
-//            item {
-//
-//                Spacer(modifier = Modifier.height(20.dp))
-//                Text(text = "Hourly Forecast", fontSize = 20.sp)
-//                LazyRow(
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .padding(vertical = 8.dp)
-//                ) {
-//                    items(apiResponse.list?.take(8) ?: emptyList()) { item ->
-//                        HourlyWeatherItem(
-//                            time = formatTime(item?.dtTxt ?: ""),
-//                            temp = "${item?.main?.temp ?: "--"}$tempUnit"
-//                        )
-//                    }
-//                }
-//            }
-//            item {
-//
-//                // 5 day forecase
-//                Spacer(modifier = Modifier.height(20.dp))
-//                Text(
-//                    text = stringResource(R.string._7_day_forecast),
-//                    fontSize = 20.sp,
-//                    style = MaterialTheme.typography.titleLarge,
-//                    modifier = Modifier.padding(horizontal = 16.dp)
-//                )
-//            }
-//
-//            // Daily forecast
-//            val dailyForecasts = apiResponse.list
-//                ?.filterNotNull()
-//                ?.groupBy { it.dtTxt?.substring(0, 10) }
-//                ?.map { it.value.first() }
-//                ?.take(8)
-//                ?: emptyList()
-//
-//            items(dailyForecasts) { forecast ->
-//                DailyForecastItem(forecast, tempUnit)
-//            }
-//
-//            //  }
-//        }
-//    }
-//}
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Preview(showSystemUi = true)
@@ -257,9 +116,9 @@ fun WeatherScreen(apiResponse: ApiResponse, settings: Settings?) {
     }
 
     val windUnit = when (settings?.windSpeedUnit) {
-        WindSpeedUnit.METER_PER_SEC -> "m/s"
-        WindSpeedUnit.MILES_PER_HOUR -> "mph"
-        null -> "m/s"
+        WindSpeedUnit.METER_PER_SEC -> stringResource(R.string.m_s)
+        WindSpeedUnit.MILES_PER_HOUR -> stringResource(R.string.mph)
+        null -> stringResource(R.string.m_s)
     }
 
     Box(
@@ -287,7 +146,7 @@ fun WeatherScreen(apiResponse: ApiResponse, settings: Settings?) {
                         .fillMaxWidth()
                         .padding(horizontal = 8.dp, vertical = 4.dp),
                     colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.7f)
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f)
                     )
                 ) {
                     Column(
@@ -418,7 +277,7 @@ fun DailyForecastItem(forecast: ListItem, tempUnit: String) {
             .fillMaxWidth()
             .padding(horizontal = 8.dp, vertical = 4.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.7f)
+            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f)
         )
     ) {
         Row(
@@ -503,7 +362,7 @@ fun DailyForecastItem(forecast: ListItem, tempUnit: String) {
             Text(
                 text = title,
                 fontSize = 14.sp,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
             )
             Text(
                 text = value,
@@ -543,7 +402,7 @@ fun DailyForecastItem(forecast: ListItem, tempUnit: String) {
         Card(
             modifier = Modifier.padding(8.dp),
             colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.7f)
+                containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f)
             )
         ) {
             Column(

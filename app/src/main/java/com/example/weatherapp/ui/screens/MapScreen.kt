@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -23,8 +22,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.example.weatherapp.R
-import com.example.weatherapp.Screen.Alerts.icon
-import com.example.weatherapp.viewmodel.FavoriteViewModel
+import com.example.weatherapp.favorites.FavoriteViewModel
 import kotlinx.coroutines.delay
 import org.osmdroid.config.Configuration
 import org.osmdroid.events.MapEventsReceiver

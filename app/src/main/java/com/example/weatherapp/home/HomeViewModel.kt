@@ -1,6 +1,6 @@
 @file:Suppress("NAME_SHADOWING")
 
-package com.example.weatherapp.viewmodel
+package com.example.weatherapp.home
 
 import android.annotation.SuppressLint
 import android.util.Log
@@ -13,9 +13,12 @@ import com.example.weatherapp.BuildConfig
 import com.example.weatherapp.LocationTracker
 import com.example.weatherapp.ResultState
 import com.example.weatherapp.data.SettingsRepository
-import com.example.weatherapp.data.SettingsRepositoryImpl
 import com.example.weatherapp.data.WeatherRepository
 import com.example.weatherapp.model.ApiResponse
+import com.example.weatherapp.viewmodel.LocationMethod
+import com.example.weatherapp.viewmodel.Settings
+import com.example.weatherapp.viewmodel.TemperatureUnit
+import com.example.weatherapp.viewmodel.WindSpeedUnit
 import kotlinx.coroutines.flow.collectLatest
 
 import kotlinx.coroutines.launch
@@ -40,51 +43,51 @@ class HomeViewModel(
 
 
     init {
-        observeSettings()
+
         observeLocationAndFetchWeather()
-        checkConnectivity()
+        observeSettings()
 
     }
 
 
-    private fun checkConnectivity() {
-        viewModelScope.launch {
-            try {
-                repository.fetchWeather(0.0, 0.0, BuildConfig.WEATHER_API_KEY)
-                _isOnline.value = true
-            } catch (e: Exception) {
-                _isOnline.value = false
-            }
-        }
-    }
-
-//    private fun observeSettings() {
+//    private fun checkConnectivity() {
 //        viewModelScope.launch {
-//            settingsRepository.settingsFlow.collect { newSettings ->
-//                _settings.value = newSettings
-//
-//                if (newSettings.locationMethod == LocationMethod.GPS) {
-//                    locationTracker.getLocationUpdates()
-//                }
+//            try {
+//                repository.fetchWeather(0.0, 0.0, BuildConfig.WEATHER_API_KEY)
+//                _isOnline.value = true
+//            } catch (e: Exception) {
+//                _isOnline.value = false
 //            }
 //        }
 //    }
-    private fun observeSettings() {
+
+     fun observeSettings() {
         viewModelScope.launch {
             settingsRepository.settingsFlow.collect { newSettings ->
 
-                currentTempUnit = _settings.value?.temperatureUnit ?: TemperatureUnit.CELSIUS
-                currentWindUnit = _settings.value?.windSpeedUnit ?: WindSpeedUnit.METER_PER_SEC
-                
-                          _settings.value = newSettings
+            currentTempUnit = _settings.value?.temperatureUnit ?: TemperatureUnit.CELSIUS
+            currentWindUnit = _settings.value?.windSpeedUnit ?: WindSpeedUnit.METER_PER_SEC
 
-                convertWeatherData()
+                _settings.value = newSettings
+
+                val newTemperatureUnit= newSettings.temperatureUnit
+                val newWindSpeedUni= newSettings.windSpeedUnit
+
+                if (newSettings.locationMethod == LocationMethod.GPS) {
+                    locationTracker.getLocationUpdates()
+                }
+                if(newTemperatureUnit != currentTempUnit || newWindSpeedUni != currentWindUnit) {
+                    Log.i("homeview", "convert data inside settings")
+                    convertWeatherData()
+
+                }
             }
         }
     }
 
+
     @SuppressLint("DefaultLocale")
-    private fun convertWeatherData() {
+     fun convertWeatherData() {
         val currentWeather = (_weatherData.value as? ResultState.Success)?.data ?: return
         val currentSettings = _settings.value ?: return
 
@@ -121,32 +124,54 @@ class HomeViewModel(
         viewModelScope.launch {
             locationTracker.myLocation.collect { location ->
                 location?.let { (lat, lon) ->
-                    fetchWeather(lat, lon)
+
+                    try {
+                        _weatherData.value = ResultState.Loading
+                        val apiKey = BuildConfig.WEATHER_API_KEY
+
+                        repository.fetchWeather(lat, lon, apiKey).collectLatest { response ->
+
+                            val currentSettings = _settings.value
+                            _weatherData.value = ResultState.Success(response)
+
+                            if (currentSettings != null) {
+                                Log.i("homeview", "convert data inside fetch weather")
+
+                                convertWeatherData()
+                            }
+
+                        }
+                    } catch (e: Exception) {
+                        Log.e("API_ERROR", "Failed to fetch weather data: ${e.message}")
+                        _weatherData.value = ResultState.Error(e)
+                    }
                 }
             }
         }
     }
 
-    private fun fetchWeather(lat: Double, lon: Double) {
-        viewModelScope.launch {
-            try {
-
-                _weatherData.value = ResultState.Loading
-                val apiKey = BuildConfig.WEATHER_API_KEY
-
-                repository.fetchWeather(lat, lon, apiKey).collectLatest { response ->
-                    _weatherData.value = ResultState.Success(response)
-                    convertWeatherData()
-                    Log.d("WeatherData", " API Response: $response")
-                    Log.d("WeatherData", "Received: $response + ${response.city?.name}")
-
-                }
-            } catch (e: Exception) {
-                Log.e("API_ERROR", "Failed to fetch weather data: ${e.message}")
-                _weatherData.value = ResultState.Error(e)
-            }
-        }
-    }
+//     fun fetchWeather(lat: Double, lon: Double) {
+//        viewModelScope.launch {
+//            try {
+//                _weatherData.value = ResultState.Loading
+//                val apiKey = BuildConfig.WEATHER_API_KEY
+//
+//                repository.fetchWeather(lat, lon, apiKey).collectLatest { response ->
+//
+//                    val currentSettings = _settings.value
+//                    _weatherData.value = ResultState.Success(response)
+//
+//                    if (currentSettings != null) {
+//                        convertWeatherData()
+//                    }
+//
+//                }
+//            } catch (e: Exception) {
+//                Log.e("API_ERROR", "Failed to fetch weather data: ${e.message}")
+//                _weatherData.value = ResultState.Error(e)
+//            }
+//        }
+//    }
 
 
     private fun convertTemperature(value: Double, targetUnit: TemperatureUnit): Double {

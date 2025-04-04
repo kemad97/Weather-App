@@ -1,6 +1,6 @@
 package com.example.weatherapp
 
-import FavoriteDetailScreen
+import com.example.weatherapp.favorites.FavoriteDetailScreen
 import SettingsScreen
 import android.content.Intent
 import android.provider.Settings
@@ -35,15 +35,15 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.weatherapp.data.SettingsRepository
 import com.example.weatherapp.data.WeatherRepository
-import com.example.weatherapp.ui.screens.AlertsScreen
-import com.example.weatherapp.ui.screens.FavoritesScreen
-import com.example.weatherapp.ui.screens.HomeScreen
+import com.example.weatherapp.alerts.AlertsScreen
+import com.example.weatherapp.favorites.FavoritesScreen
+import com.example.weatherapp.home.HomeScreen
 import com.example.weatherapp.ui.screens.MapScreen
 import com.example.weatherapp.ui.screens.MapScreenSettings
-import com.example.weatherapp.viewmodel.AlertsViewModel
-import com.example.weatherapp.viewmodel.FavoriteViewModel
-import com.example.weatherapp.viewmodel.FavoriteViewModelFactory
-import com.example.weatherapp.viewmodel.HomeViewModel
+import com.example.weatherapp.alerts.AlertsViewModel
+import com.example.weatherapp.favorites.FavoriteViewModel
+import com.example.weatherapp.favorites.FavoriteViewModelFactory
+import com.example.weatherapp.home.HomeViewModel
 import com.example.weatherapp.viewmodel.SettingsViewModel
 import com.example.weatherapp.viewmodel.SettingsViewModelFactory
 
