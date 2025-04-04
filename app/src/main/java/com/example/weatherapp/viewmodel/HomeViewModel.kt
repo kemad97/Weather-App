@@ -58,14 +58,27 @@ class HomeViewModel(
         }
     }
 
+//    private fun observeSettings() {
+//        viewModelScope.launch {
+//            settingsRepository.settingsFlow.collect { newSettings ->
+//                _settings.value = newSettings
+//
+//                if (newSettings.locationMethod == LocationMethod.GPS) {
+//                    locationTracker.getLocationUpdates()
+//                }
+//            }
+//        }
+//    }
     private fun observeSettings() {
         viewModelScope.launch {
             settingsRepository.settingsFlow.collect { newSettings ->
-                _settings.value = newSettings
 
-                if (newSettings.locationMethod == LocationMethod.GPS) {
-                    locationTracker.getLocationUpdates()
-                }
+                currentTempUnit = _settings.value?.temperatureUnit ?: TemperatureUnit.CELSIUS
+                currentWindUnit = _settings.value?.windSpeedUnit ?: WindSpeedUnit.METER_PER_SEC
+                
+                          _settings.value = newSettings
+
+                convertWeatherData()
             }
         }
     }
