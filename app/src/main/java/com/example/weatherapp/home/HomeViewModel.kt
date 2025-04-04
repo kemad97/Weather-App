@@ -30,6 +30,8 @@ class HomeViewModel(
 ) : ViewModel() {
     private val _isOnline = MutableStateFlow(true)
     val isOnline: StateFlow<Boolean> = _isOnline
+    private var currentLanguage: String? = null
+
 
 
     private val _weatherData = MutableStateFlow<ResultState<ApiResponse>>(ResultState.Loading)
@@ -65,6 +67,9 @@ class HomeViewModel(
         viewModelScope.launch {
             settingsRepository.settingsFlow.collect { newSettings ->
 
+                val previousLanguage = currentLanguage
+                currentLanguage = newSettings.language.name
+
             currentTempUnit = _settings.value?.temperatureUnit ?: TemperatureUnit.CELSIUS
             currentWindUnit = _settings.value?.windSpeedUnit ?: WindSpeedUnit.METER_PER_SEC
 
@@ -81,7 +86,12 @@ class HomeViewModel(
                     convertWeatherData()
 
                 }
-            }
+
+                if (previousLanguage != currentLanguage) {
+                    observeLocationAndFetchWeather()
+                }
+
+                }
         }
     }
 
