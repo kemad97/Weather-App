@@ -11,11 +11,13 @@ import com.example.weatherapp.data.SettingsRepository
 import com.example.weatherapp.data.WeatherRepository
 import com.example.weatherapp.data.local.FavoriteEntity
 import com.example.weatherapp.model.ApiResponse
+import com.example.weatherapp.viewmodel.LocationMethod
 import com.example.weatherapp.viewmodel.Settings
 import com.example.weatherapp.viewmodel.TemperatureUnit
 import com.example.weatherapp.viewmodel.WindSpeedUnit
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class FavoriteViewModel(
@@ -43,7 +45,7 @@ class FavoriteViewModel(
 
     }
 
-    private fun observeSettings() {
+    fun observeSettings() {
         viewModelScope.launch {
             settingsRepository.settingsFlow.collect { newSettings ->
 
@@ -52,7 +54,15 @@ class FavoriteViewModel(
 
                 _settings.value = newSettings
 
-                convertWeatherData()
+                val newTemperatureUnit= newSettings.temperatureUnit
+                val newWindSpeedUni= newSettings.windSpeedUnit
+
+
+                if(newTemperatureUnit != currentTempUnit || newWindSpeedUni != currentWindUnit) {
+                    Log.i("homeview", "convert data inside settings")
+                    convertWeatherData()
+
+                }
             }
         }
     }
@@ -119,10 +129,15 @@ class FavoriteViewModel(
                 _selectedWeather.value = ResultState.Loading
                 repository.fetchWeather(lat, lon, BuildConfig.WEATHER_API_KEY)
 
-                    .collect { response ->
-                        Log.d("FavoriteViewModel", "Received weather data: $response")
+                    .collectLatest { response ->
                         _selectedWeather.value = ResultState.Success(response)
-                        convertWeatherData() // Convert using current settings
+
+                        val currentSettings = _settings.value
+                        if (currentSettings != null) {
+                            Log.i("FavoriteViewModel", "Converting data after fetch")
+                            convertWeatherData()
+
+                        }
                     }
             } catch (e: Exception) {
                 Log.e("FavoriteViewModel", "Exception in getWeatherForLocation: ${e.message}")
