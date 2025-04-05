@@ -259,7 +259,7 @@ fun WeatherScreen(response: Response, settings: Settings?) {
                         ?.filterNotNull()
                         ?.groupBy { it.dtTxt?.substring(0, 10) }
                         ?.map { it.value.first() }
-                        ?.take(8)
+                        ?.take(5)
                         ?.forEach { forecast ->
                             DailyForecastItem(forecast, tempUnit)
                         }
@@ -274,6 +274,8 @@ fun WeatherScreen(response: Response, settings: Settings?) {
 fun DailyForecastItem(forecast: ListItem, tempUnit: String) {
      val tempMaxx = forecast.main?.tempMax?.toString() ?: "--"
     val tempMinn = forecast.main?.tempMin?.toString() ?: "--"
+    val temp = forecast.main?.temp?.toString() ?: "--"
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -325,15 +327,20 @@ fun DailyForecastItem(forecast: ListItem, tempUnit: String) {
                 modifier = Modifier.weight(1f)
             ) {
                 Text(
-                    text = stringResource(R.string.h, tempMaxx, tempUnit),
+                    text = stringResource(R.string.temp, temp, tempUnit),
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Bold
                 )
-                Text(
-                    text = stringResource(R.string.l, tempMinn, tempUnit),
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Bold
-                )
+//                Text(
+//                    text = stringResource(R.string.h, tempMaxx, tempUnit),
+//                    style = MaterialTheme.typography.bodyMedium,
+//                    fontWeight = FontWeight.Bold
+//                )
+//                Text(
+//                    text = stringResource(R.string.l, tempMinn, tempUnit),
+//                    style = MaterialTheme.typography.bodyMedium,
+//                    fontWeight = FontWeight.Bold
+//                )
                 Text(
                     text = stringResource(R.string.feels, forecast.main?.feelsLike!!, tempUnit),
                     style = MaterialTheme.typography.bodyMedium,

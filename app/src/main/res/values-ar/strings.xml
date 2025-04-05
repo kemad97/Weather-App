@@ -50,4 +50,7 @@
     <string name="location_method">تحديد المكان</string>
     <string name="at">عند: %1$s</string>
     <string name="type">النوع: %1$s</string>
+    <string name="temp">الحرارة: %1$s%2$s</string>
+
+
 </resources>

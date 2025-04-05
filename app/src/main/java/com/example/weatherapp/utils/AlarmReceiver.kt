@@ -54,7 +54,7 @@ class AlarmReceiver : BroadcastReceiver() {
 
         val alarmUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
 
-        stopAlarm(context) // Ensure any existing alarm is stopped before playing a new one
+        stopAlarm(context)
 
         ringtone = RingtoneManager.getRingtone(context, alarmUri) // Store ringtone globally
         ringtone?.play()

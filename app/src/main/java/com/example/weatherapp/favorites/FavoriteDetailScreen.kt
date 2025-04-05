@@ -245,8 +245,7 @@ fun WeatherDetailContent(
                         ) {
                             WeatherDetailItem(stringResource(R.string.humidity), "$humidity%")
                             WeatherDetailItem(stringResource(R.string.wind), "$windSpeed $windUnit")
-                            WeatherDetailItem(stringResource(R.string.pressure), "$pressure hPa")
-                        }
+                            WeatherDetailItem(stringResource(R.string.pressure), stringResource(R.string.hpa, pressure))                        }
                     }
                 }
 
