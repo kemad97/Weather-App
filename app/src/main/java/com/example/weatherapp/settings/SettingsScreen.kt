@@ -7,8 +7,12 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.weatherapp.LocaleHelper
+import com.example.weatherapp.R
 import com.example.weatherapp.ResultState
 import com.example.weatherapp.home.EmptyScreen
 import com.example.weatherapp.home.ErrorScreen
@@ -21,10 +25,23 @@ fun SettingsScreen(
     onNavigateToMap: () -> Unit
 ) {
     val settingsState by viewModel.settingsState.collectAsState()
+    val currentSettings by viewModel.currentSettings.collectAsState()
+    val context = LocalContext.current
+
+
+    LaunchedEffect(currentSettings?.language) {
+        currentSettings?.language?.let { language ->
+            val languageCode = when (language) {
+                Language.ARABIC -> "ar"
+                Language.ENGLISH -> "en"
+            }
+            LocaleHelper.updateLocale(context, languageCode)
+        }
+    }
 
     Scaffold (
         topBar = { TopAppBar(
-            title = {Text("Settings")  }
+            title = {Text(stringResource(R.string.settings))  }
         )
         }
     ){ padding ->
@@ -106,7 +123,7 @@ private fun SettingsContent(
                     .padding(16.dp)
             ) {
                 Text(
-                    text = "Temperature Unit",
+                    text = stringResource(R.string.temperature_unit),
                     style = MaterialTheme.typography.titleMedium
                 )
                 TemperatureUnit.values().forEach { unit ->
@@ -135,7 +152,7 @@ private fun SettingsContent(
                     .padding(16.dp)
             ) {
                 Text(
-                    text = "Wind Speed Unit",
+                    text = stringResource(R.string.wind_speed_unit),
                     style = MaterialTheme.typography.titleMedium
                 )
                 WindSpeedUnit.values().forEach { unit ->
@@ -164,7 +181,7 @@ private fun SettingsContent(
                     .padding(16.dp)
             ) {
                 Text(
-                    text = "Language",
+                    text = stringResource(R.string.language),
                     style = MaterialTheme.typography.titleMedium
                 )
                 Language.values().forEach { language ->

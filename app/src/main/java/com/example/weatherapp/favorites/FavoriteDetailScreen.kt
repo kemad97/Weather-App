@@ -72,7 +72,7 @@ fun FavoriteDetailScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Weather Details") },
+                title = { Text(stringResource(R.string.weather_details)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back")
@@ -297,102 +297,6 @@ fun WeatherDetailContent(
             }
         }
     }
-//    Box(modifier = Modifier.fillMaxSize()) {
-//        AsyncImage(
-//            model = R.drawable.beautifulmountains,
-//            contentDescription = "Weather Background",
-//            contentScale = ContentScale.FillBounds,
-//            modifier = Modifier.fillMaxSize()
-//        )
-//
-//        LazyColumn (
-//            modifier = Modifier
-//                .fillMaxSize()
-//                .padding(16.dp),
-//            horizontalAlignment = Alignment.CenterHorizontally
-//        ) {
-//            item {
-//                Text(text = "$cityName, $country", fontSize = 28.sp, textAlign = TextAlign.Center)
-//                Spacer(modifier = Modifier.height(8.dp))
-//
-//                Image(
-//                    painter = getWeatherIcon(description),
-//                    contentDescription = "Weather Icon",
-//                    modifier = Modifier.size(100.dp)
-//                )
-//
-//                Spacer(modifier = Modifier.height(8.dp))
-//                Text(text = "$temperature $tempUnit", fontSize = 64.sp)
-//                Text(text = description, fontSize = 22.sp)
-//                Spacer(modifier = Modifier.height(16.dp))
-//            }
-//            // Weather details
-//            item {
-//                Row(
-//                    modifier = Modifier.fillMaxWidth(),
-//                    horizontalArrangement = Arrangement.SpaceEvenly
-//                ) {
-//                    WeatherDetailItem("Humidity", "$humidity%")
-//                    WeatherDetailItem("Wind", "$windSpeed $windUnit")
-//                    WeatherDetailItem("Pressure", "$pressure hPa")
-//                }
-//            }
-//
-//            // hourly forecase
-//            item {
-//
-//                Spacer(modifier = Modifier.height(20.dp))
-//                Text(text = "Hourly Forecast", fontSize = 20.sp)
-//                LazyRow(
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .padding(vertical = 8.dp)
-//                ) {
-//                    items(apiResponse.list?.take(8) ?: emptyList()) { item ->
-//                        HourlyWeatherItem(
-//                            time = com.example.weatherapp.ui.screens.formatTime(item?.dtTxt ?: ""),
-//                            temp = "${item?.main?.temp ?: "--"}$tempUnit"
-//                        )
-//                    }
-//                }
-//            }
-//            item {
-//
-//                // 5 day forecase
-//                Spacer(modifier = Modifier.height(20.dp))
-//                Text(
-//                    text = "7-Day Forecast",
-//                    fontSize = 20.sp,
-//                    style = MaterialTheme.typography.titleLarge,
-//                    modifier = Modifier.padding(horizontal = 16.dp)
-//                )
-//            }
-//
-////            LazyColumn(
-////                modifier = Modifier
-////                    .fillMaxWidth()
-////                    .fillMaxSize()
-////                    .padding(vertical = 8.dp),
-////                verticalArrangement = Arrangement.spacedBy(4.dp)
-////            ) {
-//            val dailyForecasts = apiResponse.list
-//                ?.filterNotNull()
-//                ?.groupBy { it.dtTxt?.substring(0, 10) }
-//                ?.map { it.value.first() }
-//                ?.take(5)
-//                ?: emptyList()
-//
-//            items(dailyForecasts) { forecast ->
-//                DailyForecastItem(forecast, tempUnit)
-//            }
-//
-//            //  }
-//        }
-//    }
-
-
 }
-
-
 
 

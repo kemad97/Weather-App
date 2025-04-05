@@ -30,8 +30,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.weatherapp.AlarmReceiver
+import com.example.weatherapp.R
 import com.example.weatherapp.data.local.AlertType
 import com.example.weatherapp.data.local.AlertEntity
 import java.text.SimpleDateFormat
@@ -50,12 +52,12 @@ fun AlertsScreen(viewModel: AlertsViewModel) {
 
     Scaffold(
         topBar = { TopAppBar(
-            title = {Text("Weather Alerts")  }
+            title = {Text(stringResource(R.string.weather_alerts))  }
         )
         },
         floatingActionButton = {
             FloatingActionButton(onClick = { showAddDialog = true }) {
-                Icon(Icons.Default.Add, "Add Alert")
+                Icon(Icons.Default.Add, stringResource(R.string.add_alert))
             }
         }
     ) { padding ->
@@ -66,7 +68,7 @@ fun AlertsScreen(viewModel: AlertsViewModel) {
                     .padding(padding),
                 contentAlignment = Alignment.Center
             ) {
-                Text("No alerts added yet")
+                Text(stringResource(R.string.no_alerts_added_yet))
             }
         } else {
             LazyColumn(
@@ -89,7 +91,7 @@ fun AlertsScreen(viewModel: AlertsViewModel) {
         if (showAddDialog) {
             AlertDialog(
                 onDismissRequest = { showAddDialog = false },
-                title = { Text("Add Weather Alert") },
+                title = { Text(stringResource(R.string.add_weather_alert)) },
                 text = {
                     var timeError by rememberSaveable { mutableStateOf(false) }
 
@@ -102,7 +104,7 @@ fun AlertsScreen(viewModel: AlertsViewModel) {
                         OutlinedTextField(
                             value = alertTitle,
                             onValueChange = { alertTitle = it },
-                            label = { Text("Alert Title") },
+                            label = { Text(stringResource(R.string.alert_title)) },
                             modifier = Modifier.fillMaxWidth()
                         )
 
@@ -121,7 +123,7 @@ fun AlertsScreen(viewModel: AlertsViewModel) {
 
                         if (timeError) {
                             Text(
-                                text = "Start time must be in the future!",
+                                text = stringResource(R.string.start_time_must_be_in_the_future),
                                 color = Color.Red,
                                 modifier = Modifier.padding(top = 4.dp)
                             )
@@ -153,12 +155,12 @@ fun AlertsScreen(viewModel: AlertsViewModel) {
                         },
                         enabled = alertTitle.isNotBlank()
                     ) {
-                        Text("Add")
+                        Text(stringResource(R.string.add))
                     }
                 },
                 dismissButton = {
                     TextButton(onClick = { showAddDialog = false }) {
-                        Text("Cancel")
+                        Text(stringResource(R.string.cancel))
                     }
                 },
                 containerColor = Color.DarkGray
@@ -272,7 +274,7 @@ fun AlertTypeSelector(
     onTypeSelected: (AlertType) -> Unit
 ) {
     Column {
-        Text("Alert Type")
+        Text(stringResource(R.string.alert_type))
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly
@@ -327,7 +329,7 @@ fun AlertItem(
                 )
             }
             IconButton(onClick = onDelete) {
-                Icon(Icons.Default.Delete, "Delete Alert")
+                Icon(Icons.Default.Delete, stringResource(R.string.delete_alert))
             }
         }
     }

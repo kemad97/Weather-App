@@ -11,7 +11,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.weatherapp.R
 import com.example.weatherapp.data.local.FavoriteEntity
 
 
@@ -32,12 +34,12 @@ fun FavoritesScreen(
             FloatingActionButton(onClick = onNavigateToMap) {
                 Icon(
                     imageVector = Icons.Default.Add,
-                    contentDescription = "Add location"
+                    contentDescription = stringResource(R.string.add_location)
                 )
             }
         },
       topBar = { TopAppBar(
-          title = {Text("Favorite Locations")  }
+          title = {Text(stringResource(R.string.favorite_locations))  }
       )
           },
 
@@ -54,7 +56,7 @@ fun FavoritesScreen(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text("No Favorites added yet")
+                        Text(stringResource(R.string.no_favorites_added_yet))
                     }
                 } else {
                     LazyColumn(
@@ -78,8 +80,12 @@ fun FavoritesScreen(
         AlertDialog(
             containerColor = Color.DarkGray,
                     onDismissRequest = { showDeleteDialog = null },
-            title = { Text("Delete Location") },
-            text = { Text("Are you sure you want to delete ${favorite.cityName} from favorites?") },
+            title = { Text(stringResource(R.string.delete_location)) },
+            text = { Text(
+                stringResource(
+                    R.string.are_you_sure_you_want_to_delete_from_favorites,
+                    favorite.cityName
+                )) },
             confirmButton = {
                 TextButton(
                     onClick = {
@@ -87,12 +93,12 @@ fun FavoritesScreen(
                         showDeleteDialog = null
                     }
                 ) {
-                    Text("Delete")
+                    Text(stringResource(R.string.delete))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showDeleteDialog = null }) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.cancel))
                 }
             }
         )
@@ -132,7 +138,7 @@ fun FavoriteItem(
             IconButton(onClick = onDelete) {
                 Icon(
                     imageVector = Icons.Default.Delete,
-                    contentDescription = "Delete favorite"
+                    contentDescription = stringResource(R.string.delete_favorite)
                 )
             }
         }

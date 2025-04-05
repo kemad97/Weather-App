@@ -83,7 +83,6 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel()) {
 }
 
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Preview(showSystemUi = true)
 @Composable
 fun WeatherScreen(apiResponse: ApiResponse, settings: Settings?) {
@@ -215,7 +214,8 @@ fun WeatherScreen(apiResponse: ApiResponse, settings: Settings?) {
                         ) {
                             WeatherDetailItem(stringResource(R.string.humidity), "$humidity%")
                             WeatherDetailItem(stringResource(R.string.wind), "$windSpeed $windUnit")
-                            WeatherDetailItem(stringResource(R.string.pressure), "$pressure hPa")
+                            WeatherDetailItem(stringResource(R.string.pressure),
+                                stringResource(R.string.hpa, pressure))
                         }
                     }
                 }
@@ -223,7 +223,7 @@ fun WeatherScreen(apiResponse: ApiResponse, settings: Settings?) {
                 // Hourly Forecast (outside the card)
                 Spacer(modifier = Modifier.height(20.dp))
                 Text(
-                    text = "Hourly Forecast",
+                    text = stringResource(R.string.hourly_forecast),
                     fontSize = 20.sp,
                     modifier = Modifier.fillMaxWidth(),
                     textAlign = TextAlign.Start
@@ -257,10 +257,11 @@ fun WeatherScreen(apiResponse: ApiResponse, settings: Settings?) {
                 Column {
                     apiResponse.list
                         ?.filterNotNull()
-                        ?.take(5)
+                        ?.groupBy { it.dtTxt?.substring(0, 10) }
+                        ?.map { it.value.first() }
+                        ?.take(8)
                         ?.forEach { forecast ->
-                                DailyForecastItem(forecast, tempUnit)
-
+                            DailyForecastItem(forecast, tempUnit)
                         }
                 }
             }
@@ -324,17 +325,17 @@ fun DailyForecastItem(forecast: ListItem, tempUnit: String) {
                 modifier = Modifier.weight(1f)
             ) {
                 Text(
-                    text = " H: ${tempMaxx}$tempUnit",
+                    text = stringResource(R.string.h, tempMaxx, tempUnit),
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = "L: ${tempMinn}$tempUnit",
+                    text = stringResource(R.string.l, tempMinn, tempUnit),
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = "Feels: ${forecast.main?.feelsLike}$tempUnit",
+                    text = stringResource(R.string.feels, forecast.main?.feelsLike!!, tempUnit),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.primary
                 )

@@ -11,6 +11,7 @@ import com.example.weatherapp.data.local.LocalDataSourceImpl
 import com.example.weatherapp.ui.theme.WeatherAppTheme
 import com.example.weatherapp.home.HomeViewModel
 import com.example.weatherapp.home.HomeViewModelFactory
+import com.example.weatherapp.settings.Language
 
 
 class MainActivity : ComponentActivity() {
@@ -27,6 +28,15 @@ class MainActivity : ComponentActivity() {
         val locationTracker = LocationTracker.getInstance(this)
 
         val settingsRepository = SettingsRepositoryImpl(sharedPreferences)
+
+        val savedLanguage = settingsRepository.getLanguage()
+        val languageCode = when (Language.valueOf(savedLanguage)) {
+            Language.ARABIC -> "ar"
+            Language.ENGLISH -> "en"
+        }
+
+        // Update the locale
+        LocaleHelper.updateLocale(this, languageCode)
 
 
         val viewModel = ViewModelProvider(
