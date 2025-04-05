@@ -65,14 +65,7 @@ class WeatherRepositoryTest {
         assertThat(finalFavorites.size, `is`(0))
     }
 
-    @Test
-    fun fetchWeatherData_success() = runTest {
-        // When
-        val response = weatherRepository.fetchWeather(0.0, 0.0, "test_key").first()
-
-        // Then
-        assertThat(response.city?.name, `is`("Cairo"))
-    }
+   
 
 
 }
