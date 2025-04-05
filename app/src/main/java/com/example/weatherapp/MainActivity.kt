@@ -4,7 +4,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import com.example.weatherapp.data.local.SettingsRepositoryImpl
 import com.example.weatherapp.data.local.WeatherDatabase
 import com.example.weatherapp.data.WeatherRepository
@@ -13,9 +12,7 @@ import com.example.weatherapp.ui.theme.WeatherAppTheme
 import com.example.weatherapp.home.HomeViewModel
 import com.example.weatherapp.home.HomeViewModelFactory
 import com.example.weatherapp.settings.Language
-import com.example.weatherapp.settings.SettingsViewModel
-import com.example.weatherapp.settings.SettingsViewModelFactory
-import kotlinx.coroutines.launch
+
 
 
 class MainActivity : ComponentActivity() {

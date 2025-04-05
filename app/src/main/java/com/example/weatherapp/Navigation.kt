@@ -3,7 +3,9 @@ package com.example.weatherapp
 import com.example.weatherapp.favorites.FavoriteDetailScreen
 import com.example.weatherapp.settings.SettingsScreen
 import android.content.Intent
+import android.os.Build
 import android.provider.Settings
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.AlertDialog
@@ -51,22 +53,21 @@ import com.example.weatherapp.settings.SettingsViewModelFactory
 sealed class Screen(
     val route: String,
     var icon: Int,
-    val label: String
+    val label: Int
 ) {
-    data object Home : Screen("home", R.drawable.ic_home, "Home")
-    data object Favorites : Screen("favorites", R.drawable.ic_fav, "Favorites")
-    data object Alerts : Screen("alerts", R.drawable.ic_alerts, "Alerts")
-    data object Settings : Screen("settings", R.drawable.ic_settings, "Settings")
-    data object Map : Screen("map", 0, "")
-    data object MapSettings : Screen("map/settings", 0, "")
+    data object Home : Screen("home", R.drawable.ic_home, R.string.home)
+    data object Favorites : Screen("favorites", R.drawable.ic_fav, R.string.favorites)
+    data object Alerts : Screen("alerts", R.drawable.ic_alerts, R.string.alerts)
+    data object Settings : Screen("settings", R.drawable.ic_settings, R.string.settings)
+    data object Map : Screen("map", 0, 0)
+    data object MapSettings : Screen("map/settings", 0, 0)
 
-
-    data object FavoriteDetail : Screen("favorite_detail/{lat}/{lon}", 0, "") {
+    data object FavoriteDetail : Screen("favorite_detail/{lat}/{lon}", 0, 0) {
         fun createRoute(lat: Double, lon: Double) = "favorite_detail/$lat/$lon"
     }
-
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
@@ -126,11 +127,11 @@ fun MainScreen(
                         icon = {
                             Icon(
                                 painter = painterResource(id = screen.icon),
-                                contentDescription = screen.label
+                                contentDescription = stringResource(id = screen.label)
                             )
                         },
 
-                        label = { Text(screen.label) },
+                        label = { Text(stringResource(id = screen.label)) },
                         selected = currentDestination?.hierarchy?.any {
                             it.route == screen.route
                         } == true,

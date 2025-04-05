@@ -43,5 +43,9 @@
     <string name="location_required">Location Required</string>
     <string name="please_enable_location_services_to_get_weather_information">Please enable location services to get weather information.</string>
     <string name="weather_forecast">Weather Forecast</string>
+    <string name="home">Home</string>
+    <string name="favorites">Favorites</string>
+    <string name="alerts">Alerts</string>
+    <string name="location_method">Location Method</string>
 
 </resources>

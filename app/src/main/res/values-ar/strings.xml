@@ -44,4 +44,9 @@
     <string name="location_required">الموقع مطلوب</string>
     <string name="please_enable_location_services_to_get_weather_information">يرجى تمكين خدمات الموقع للحصول على معلومات الطقس.</string>
     <string name="weather_forecast">توقعات الطقس</string>
+    <string name="home">الرئيسية</string>
+    <string name="favorites">االمفضلات</string>
+    <string name="alerts">التنبيهات</string>
+    <string name="location_method">تحديد المكان</string>
+
 </resources>
