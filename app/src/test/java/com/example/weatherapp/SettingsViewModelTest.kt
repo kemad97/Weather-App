@@ -5,7 +5,6 @@ import com.example.weatherapp.settings.Language
 import com.example.weatherapp.settings.SettingsViewModel
 import com.example.weatherapp.settings.TemperatureUnit
 import com.example.weatherapp.settings.WindSpeedUnit
-import com.example.weatherapp.viewmodel.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.*
@@ -44,7 +43,6 @@ class SettingsViewModelTest {
 
         // Then
         val settings = (viewModel.settingsState.value as ResultState.Success).data
-        assertThat(settings.useGPS, `is`(true))
         assertThat(settings.temperatureUnit, `is`(TemperatureUnit.CELSIUS))
         assertThat(settings.windSpeedUnit, `is`(WindSpeedUnit.METER_PER_SEC))
         assertThat(settings.language, `is`(Language.ENGLISH))

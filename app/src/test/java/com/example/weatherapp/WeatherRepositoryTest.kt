@@ -1,8 +1,10 @@
 package com.example.weatherapp
 
+import android.content.SharedPreferences
 import com.example.weatherapp.data.WeatherRepository
 import com.example.weatherapp.data.local.AlertEntity
 import com.example.weatherapp.data.local.FavoriteEntity
+import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
@@ -10,18 +12,21 @@ import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Before
 import org.junit.Test
+import org.mockito.Mockito.mock
 
 @ExperimentalCoroutinesApi
 class WeatherRepositoryTest {
     private lateinit var localDataSource: FakeLocalDataSource
     private lateinit var remoteRepository: FakeRemoteDataSource
     private lateinit var weatherRepository: WeatherRepository
+    private  lateinit var  sharedPreferences: SharedPreferences
 
     @Before
     fun createRepository() {
         localDataSource = FakeLocalDataSource()
         remoteRepository = FakeRemoteDataSource()
-        weatherRepository = WeatherRepository(localDataSource, remoteRepository)
+        sharedPreferences = mockk<SharedPreferences>(relaxed = true)
+        weatherRepository = WeatherRepository(localDataSource,   sharedPreferences,remoteRepository)
     }
 
     @Test
@@ -46,7 +51,6 @@ class WeatherRepositoryTest {
 
     @Test
     fun insertAndDeleteFavorite() = runTest {
-        // Given
         val favorite = FavoriteEntity(
             cityName = "Alexandria",
             lat = 31.2001,

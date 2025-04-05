@@ -2,6 +2,7 @@ package com.example.weatherapp
 
 import com.example.weatherapp.data.SettingsRepository
 import com.example.weatherapp.settings.Language
+import com.example.weatherapp.settings.LocationMethod
 import com.example.weatherapp.settings.Settings
 import com.example.weatherapp.settings.TemperatureUnit
 import com.example.weatherapp.settings.WindSpeedUnit
@@ -9,14 +10,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 class FakeSettingsRepository : SettingsRepository {
-    private var _useGPS = true
+    private var _useGPS = LocationMethod.GPS
     private var _temperatureUnit = TemperatureUnit.CELSIUS.name
     private var _windSpeedUnit = WindSpeedUnit.METER_PER_SEC.name
     private var _language = Language.ENGLISH.name
 
     private val _settingsFlow = MutableStateFlow(
         Settings(
-            useGPS = _useGPS,
+            locationMethod = LocationMethod.GPS,
             temperatureUnit = TemperatureUnit.CELSIUS,
             windSpeedUnit = WindSpeedUnit.METER_PER_SEC,
             language = Language.ENGLISH
@@ -25,7 +26,9 @@ class FakeSettingsRepository : SettingsRepository {
 
     override val settingsFlow: StateFlow<Settings> = _settingsFlow
 
-    override fun getUseGPS(): Boolean = _useGPS
+    override fun getLocationMethod(): LocationMethod {
+        TODO("Not yet implemented")
+    }
 
     override fun getTemperatureUnit(): String = _temperatureUnit
 
@@ -33,10 +36,11 @@ class FakeSettingsRepository : SettingsRepository {
 
     override fun getLanguage(): String = _language
 
-    override fun updateUseGPS(useGPS: Boolean) {
-        _useGPS = useGPS
-        updateSettingsFlow()
+    override fun updateLocationMethod(method: LocationMethod) {
+        TODO("Not yet implemented")
     }
+
+
 
     override fun updateTemperatureUnit(unit: TemperatureUnit) {
         _temperatureUnit = unit.name
@@ -55,7 +59,7 @@ class FakeSettingsRepository : SettingsRepository {
 
     private fun updateSettingsFlow() {
         _settingsFlow.value = Settings(
-            useGPS = _useGPS,
+            locationMethod = LocationMethod.GPS,
             temperatureUnit = TemperatureUnit.valueOf(_temperatureUnit),
             windSpeedUnit = WindSpeedUnit.valueOf(_windSpeedUnit),
             language = Language.valueOf(_language)
