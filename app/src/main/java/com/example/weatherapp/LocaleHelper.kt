@@ -4,7 +4,7 @@ package com.example.weatherapp
 import android.content.Context
 import android.content.res.Configuration
 import java.util.*
-
+//
 object LocaleHelper {
     fun updateLocale(context: Context, language: String): Context {
         val currentLocale = context.resources.configuration.locales[0]
@@ -23,3 +23,6 @@ object LocaleHelper {
         return context.createConfigurationContext(configuration)
     }
 }
+
+
+

@@ -42,5 +42,6 @@
     <string name="feels">Feels: %1$s%2$s</string>
     <string name="location_required">Location Required</string>
     <string name="please_enable_location_services_to_get_weather_information">Please enable location services to get weather information.</string>
+    <string name="weather_forecast">Weather Forecast</string>
 
 </resources>

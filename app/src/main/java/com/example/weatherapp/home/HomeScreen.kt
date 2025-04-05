@@ -51,7 +51,7 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel()) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Weather Forecast") },
+                title = { Text(stringResource(R.string.weather_forecast)) },
                 actions = {
                     IconButton(onClick = {
                         viewModel.observeSettings()

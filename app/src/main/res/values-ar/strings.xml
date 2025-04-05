@@ -41,4 +41,7 @@
     <string name="h">" ع: %1$s%2$s"</string>
     <string name="l">ص: %1$s%2$s</string>
     <string name="feels">يشعر: %1$s%2$s</string>
+    <string name="location_required">الموقع مطلوب</string>
+    <string name="please_enable_location_services_to_get_weather_information">يرجى تمكين خدمات الموقع للحصول على معلومات الطقس.</string>
+    <string name="weather_forecast">توقعات الطقس</string>
 </resources>
