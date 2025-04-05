@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.weatherapp.BuildConfig
 import com.example.weatherapp.ResultState
-import com.example.weatherapp.data.SettingsRepository
+import com.example.weatherapp.data.local.SettingsRepository
 import com.example.weatherapp.data.WeatherRepository
 import com.example.weatherapp.data.local.FavoriteEntity
 import com.example.weatherapp.model.ApiResponse

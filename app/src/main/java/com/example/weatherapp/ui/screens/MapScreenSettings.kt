@@ -27,6 +27,7 @@ import org.osmdroid.config.Configuration
 
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
+import org.osmdroid.views.overlay.Marker
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -42,6 +43,8 @@ fun MapScreenSettings(
     var searchResults by remember { mutableStateOf<List<Address>>(emptyList()) }
     var isSearching by remember { mutableStateOf(false) }
     var currentMapView by remember { mutableStateOf<MapView?>(null) }
+    var searchActive by remember { mutableStateOf(false) }  // search panel visibility
+
 
     LaunchedEffect(Unit) {
         Configuration.getInstance()
@@ -104,86 +107,91 @@ fun MapScreenSettings(
                     .fillMaxWidth()
                     .padding(16.dp)
             ) {
-                Surface(
-                    modifier = Modifier.fillMaxWidth(),
-                    color = MaterialTheme.colorScheme.surface.copy(alpha = 0.9f),
-                    shape = MaterialTheme.shapes.small
+                // Search Bar
+                SearchBar(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                    query = searchQuery,
+                    onQueryChange = { newQuery ->
+                        searchQuery = newQuery
+                    },
+                    onSearch = {
+                        // Close the search panel
+                        searchActive = false
+                    },
+                    active = searchActive, // Controls the visibility of the search panel
+                    onActiveChange = { newState ->
+                        searchActive = newState
+                    },
+                    placeholder = { Text("Search location") }
                 ) {
-                    Column {
-                        OutlinedTextField(
-                            value = searchQuery,
-                            onValueChange = { searchQuery = it },
+                    // Search results
+                    if (searchResults.isNotEmpty()) {
+                        Column(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(8.dp),
-                            label = { Text("Search location") },
-                            trailingIcon = {
-                                if (isSearching) {
-                                    CircularProgressIndicator(
-                                        modifier = Modifier.size(24.dp)
-                                    )
-                                }
-                            },
-                            singleLine = true
-                        )
-
-                        if (searchResults.isNotEmpty()) {
-                            Surface(
-                                color = MaterialTheme.colorScheme.surface,
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                Column(
-                                    modifier = Modifier.padding(8.dp)
-                                ) {
-                                    searchResults.forEach { address ->
-                                        TextButton(
-                                            onClick = {
-                                                currentMapView?.let { mapView ->
-                                                    val point = GeoPoint(
-                                                        address.latitude,
-                                                        address.longitude
-                                                    )
-                                                    selectedLocation = point
-                                                    mapView.controller.animateTo(point)
-                                                    mapView.controller.setZoom(15.0)
-
-                                                    mapView.overlays.removeAll { it is org.osmdroid.views.overlay.Marker }
-                                                    val marker = org.osmdroid.views.overlay.Marker(mapView).apply {
-                                                        position = point
-                                                        setAnchor(org.osmdroid.views.overlay.Marker.ANCHOR_CENTER, org.osmdroid.views.overlay.Marker.ANCHOR_BOTTOM)
-                                                        icon = context.resources.getDrawable(R.drawable.ic_location, null)
-                                                        title = address.getAddressLine(0)
-                                                    }
-                                                    mapView.overlays.add(marker)
-                                                    mapView.invalidate()
-
-                                                    searchQuery = address.getAddressLine(0) ?: ""
-                                                    searchResults = emptyList()
-                                                }
-                                            },
-                                            modifier = Modifier.fillMaxWidth()
-                                        ) {
-                                            Text(
-                                                text = address.getAddressLine(0) ?: "Unknown location",
-                                                modifier = Modifier
-                                                    .fillMaxWidth()
-                                                    .padding(vertical = 4.dp),
-                                                textAlign = TextAlign.Start
+                                .padding(8.dp)
+                        ) {
+                            searchResults.forEach { address ->
+                                TextButton(
+                                    onClick = {
+                                        currentMapView?.let { mapView ->
+                                            val point = GeoPoint(
+                                                address.latitude,
+                                                address.longitude
                                             )
+                                            selectedLocation = point
+                                            mapView?.controller?.animateTo(point)
+                                            mapView?.controller?.setZoom(15.0)
+
+                                            mapView?.overlays?.clear()
+
+                                            // Add new marker
+                                            val marker = Marker(mapView).apply {
+                                                position = point
+                                                setAnchor(
+                                                    Marker.ANCHOR_CENTER,
+                                                    Marker.ANCHOR_BOTTOM
+                                                )
+                                                icon = context.resources.getDrawable(
+                                                    R.drawable.ic_location,
+                                                    null
+                                                )
+                                                title = address.getAddressLine(0)
+                                            }
+                                            mapView?.overlays?.add(marker)
+                                            mapView?.invalidate()
+
+                                            searchQuery = address.getAddressLine(0) ?: ""
+                                            searchResults = emptyList()
+
+                                            // Close the search panel
+                                            searchActive = false
                                         }
-                                    }
+                                    },
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    Text(
+                                        text = address.getAddressLine(0) ?: "Unknown location",
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(vertical = 4.dp),
+                                        textAlign = TextAlign.Start
+                                    )
                                 }
                             }
                         }
                     }
                 }
 
+
                 if (selectedLocation != null) {
                     Surface(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 8.dp),
-                        color = MaterialTheme.colorScheme.surface.copy(alpha = 0.9f),
+                        color = MaterialTheme.colorScheme.surface.copy(alpha = 0.5f),
                         shape = MaterialTheme.shapes.small
                     ) {
                         Text(

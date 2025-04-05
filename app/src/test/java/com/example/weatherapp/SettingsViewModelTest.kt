@@ -1,6 +1,6 @@
 package com.example.weatherapp
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.example.weatherapp.data.SettingsRepository
+import com.example.weatherapp.data.local.SettingsRepository
 import com.example.weatherapp.settings.Language
 import com.example.weatherapp.settings.SettingsViewModel
 import com.example.weatherapp.settings.TemperatureUnit

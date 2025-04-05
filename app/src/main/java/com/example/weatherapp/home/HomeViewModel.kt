@@ -12,7 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.weatherapp.BuildConfig
 import com.example.weatherapp.LocationTracker
 import com.example.weatherapp.ResultState
-import com.example.weatherapp.data.SettingsRepository
+import com.example.weatherapp.data.local.SettingsRepository
 import com.example.weatherapp.data.WeatherRepository
 import com.example.weatherapp.model.ApiResponse
 import com.example.weatherapp.settings.LocationMethod

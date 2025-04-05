@@ -3,7 +3,7 @@ package com.example.weatherapp.settings
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.weatherapp.ResultState
-import com.example.weatherapp.data.SettingsRepository
+import com.example.weatherapp.data.local.SettingsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

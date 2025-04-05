@@ -14,9 +14,11 @@ interface WeatherApiService {
         @Query("lat") lat: Double,
         @Query("lon") lon: Double,
         @Query("appid") apiKey: String,
+        @Query("dt") dt: Long = System.currentTimeMillis() / 1000,
         @Query("units") units: String = "metric", // in Celsius
         @Query("lang") lang: String = "en"
     ): ApiResponse
+
 
 
 }

@@ -257,11 +257,10 @@ fun WeatherScreen(apiResponse: ApiResponse, settings: Settings?) {
                 Column {
                     apiResponse.list
                         ?.filterNotNull()
-                        ?.groupBy { it.dtTxt?.substring(0, 10) }
-                        ?.map { it.value.first() }
-                        ?.take(8)
+                        ?.take(5)
                         ?.forEach { forecast ->
-                            DailyForecastItem(forecast, tempUnit)
+                                DailyForecastItem(forecast, tempUnit)
+
                         }
                 }
             }
@@ -272,6 +271,8 @@ fun WeatherScreen(apiResponse: ApiResponse, settings: Settings?) {
 //@Preview(showSystemUi = true)
 @Composable
 fun DailyForecastItem(forecast: ListItem, tempUnit: String) {
+     val tempMaxx = forecast.main?.tempMax?.toString() ?: "--"
+    val tempMinn = forecast.main?.tempMin?.toString() ?: "--"
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -323,12 +324,12 @@ fun DailyForecastItem(forecast: ListItem, tempUnit: String) {
                 modifier = Modifier.weight(1f)
             ) {
                 Text(
-                    text = " H: ${forecast.main?.tempMax}$tempUnit",
+                    text = " H: ${tempMaxx}$tempUnit",
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = "L: ${forecast.main?.tempMin}$tempUnit",
+                    text = "L: ${tempMinn}$tempUnit",
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Bold
                 )

@@ -42,15 +42,11 @@ fun MapScreen(
     var selectedLocation by remember { mutableStateOf<GeoPoint?>(null) }
     var cityName by remember { mutableStateOf("") }
     var searchQuery by remember { mutableStateOf("") }
-    var mapView by remember { mutableStateOf<MapView?>(null) }
     var searchResults by remember { mutableStateOf<List<Address>>(emptyList()) }
     var isSearching by remember { mutableStateOf(false) }
     var currentMapView by remember { mutableStateOf<MapView?>(null) }
+    var searchActive by remember { mutableStateOf(false) }  // search panel visibility
 
-
-
-
-    // Debounced search
     LaunchedEffect(searchQuery) {
         if (searchQuery.length >= 3) {
             isSearching = true
@@ -67,11 +63,6 @@ fun MapScreen(
         } else {
             searchResults = emptyList()
         }
-    }
-
-    LaunchedEffect(Unit) {
-        Configuration.getInstance()
-            .load(context, PreferenceManager.getDefaultSharedPreferences(context))
     }
 
     LaunchedEffect(selectedLocation) {
@@ -113,90 +104,85 @@ fun MapScreen(
                     .fillMaxWidth()
                     .padding(16.dp)
             ) {
-                // Search Bar with ackground
-                Surface(
-                    modifier = Modifier.fillMaxWidth(),
-                    color = MaterialTheme.colorScheme.surface.copy(alpha = 0.5f),
-                    shape = MaterialTheme.shapes.small
+                // Search Bar
+                SearchBar(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                    query = searchQuery,
+                    onQueryChange = { newQuery ->
+                        searchQuery = newQuery
+                    },
+                    onSearch = {
+                        // Close the search panel
+                        searchActive = false
+                    },
+                    active = searchActive, //  visibility of the search panel
+                    onActiveChange = { newState ->
+                        searchActive = newState
+                    },
+                    placeholder = { Text("Search location") }
                 ) {
-                    Column {
-                        OutlinedTextField(
-                            value = searchQuery,
-                            onValueChange = { searchQuery = it },
+                    // Search results
+                    if (searchResults.isNotEmpty()) {
+                        Column(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(8.dp),
-                            label = { Text("Search location") },
-                            trailingIcon = {
-                                if (isSearching) {
-                                    CircularProgressIndicator(
-                                        modifier = Modifier.size(24.dp)
-                                    )
-                                }
-                            },
-                            singleLine = true
-                        )
-
-                        // Search results
-                        if (searchResults.isNotEmpty()) {
-                            Surface(
-                                color = MaterialTheme.colorScheme.surface,
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                Column(
-                                    modifier = Modifier.padding(8.dp)
-                                ) {
-                                    searchResults.forEach { address ->
-                                        TextButton(
-                                            onClick = {
-                                                currentMapView?.let { mapView ->
-                                                    val point = GeoPoint(
-                                                        address.latitude,
-                                                        address.longitude
-                                                    )
-                                                    selectedLocation = point
-                                                    mapView?.controller?.animateTo(point)
-                                                    mapView?.controller?.setZoom(15.0)
-
-                                                    // Update marker
-                                                    mapView?.overlays?.removeAll { it is Marker }
-                                                    val marker = Marker(mapView).apply {
-                                                        position = point
-                                                        setAnchor(
-                                                            Marker.ANCHOR_CENTER,
-                                                            Marker.ANCHOR_BOTTOM
-                                                        )
-                                                        icon = context.resources.getDrawable(
-                                                            R.drawable.ic_location,
-                                                            null
-                                                        )
-                                                        title = address.getAddressLine(0)
-                                                    }
-                                                    mapView?.overlays?.add(marker)
-                                                    mapView?.invalidate()
-
-                                                    searchQuery = address.getAddressLine(0) ?: ""
-                                                    searchResults = emptyList()
-                                                }
-                                            },
-                                            modifier = Modifier.fillMaxWidth()
-                                        ) {
-                                            Text(
-                                                text = address.getAddressLine(0) ?: "Unknown location",
-                                                modifier = Modifier
-                                                    .fillMaxWidth()
-                                                    .padding(vertical = 4.dp),
-                                                textAlign = TextAlign.Start
+                                .padding(8.dp)
+                        ) {
+                            searchResults.forEach { address ->
+                                TextButton(
+                                    onClick = {
+                                        currentMapView?.let { mapView ->
+                                            val point = GeoPoint(
+                                                address.latitude,
+                                                address.longitude
                                             )
+                                            selectedLocation = point
+                                            mapView?.controller?.animateTo(point)
+                                            mapView?.controller?.setZoom(15.0)
+
+                                            // Clear existing markers
+                                            mapView?.overlays?.clear()
+
+                                            // Add new marker
+                                            val marker = Marker(mapView).apply {
+                                                position = point
+                                                setAnchor(
+                                                    Marker.ANCHOR_CENTER,
+                                                    Marker.ANCHOR_BOTTOM
+                                                )
+                                                icon = context.resources.getDrawable(
+                                                    R.drawable.ic_location,
+                                                    null
+                                                )
+                                                title = address.getAddressLine(0)
+                                            }
+                                            mapView?.overlays?.add(marker)
+                                            mapView?.invalidate()
+
+                                            searchQuery = address.getAddressLine(0) ?: ""
+                                            searchResults = emptyList()
+
+                                            // Close the search panel
+                                            searchActive = false
                                         }
-                                    }
+                                    },
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    Text(
+                                        text = address.getAddressLine(0) ?: "Unknown location",
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(vertical = 4.dp),
+                                        textAlign = TextAlign.Start
+                                    )
                                 }
                             }
                         }
                     }
                 }
 
-                // Selected location display
                 if (selectedLocation != null) {
                     Surface(
                         modifier = Modifier
@@ -235,12 +221,13 @@ fun MapScreen(
         }
     }
 }
+
+
 @Composable
 fun MapViewContainer(
     context: Context,
     onLocationSelected: (GeoPoint) -> Unit,
     onMapViewCreated: (MapView) -> Unit
-
 ) {
     var mapView by remember { mutableStateOf<MapView?>(null) }
 
@@ -274,22 +261,20 @@ fun MapViewContainer(
                 overlays.add(mapEventsOverlay)
                 mapView = this
                 onMapViewCreated(this)
-
-
             }
-
         }
-
     )
 
     // Clean up
     DisposableEffect(Unit) {
         onDispose {
-          mapView?.onDetach()
-
+            mapView?.onDetach()
         }
     }
 }
+
+
+
 
 fun getCityName(context: Context, lat: Double, lon: Double): String {
     val geocoder = Geocoder(context)
@@ -304,16 +289,3 @@ fun getCityName(context: Context, lat: Double, lon: Double): String {
     }
 }
 
-fun searchLocation(context: Context, query: String, onResult: (GeoPoint) -> Unit) {
-    val geocoder = Geocoder(context)
-    try {
-        @Suppress("DEPRECATION")
-        val addresses = geocoder.getFromLocationName(query, 1)
-        addresses?.firstOrNull()?.let { address ->
-            val point = GeoPoint(address.latitude, address.longitude)
-            onResult(point)
-        }
-    } catch (e: Exception) {
-        e.printStackTrace()
-    }
-}
