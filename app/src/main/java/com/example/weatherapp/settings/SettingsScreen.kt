@@ -99,7 +99,7 @@ private fun SettingsContent(
                     .padding(16.dp)
             ) {
                 Text(
-                    text = "Location Method",
+                    text = stringResource(R.string.location_method),
                     style = MaterialTheme.typography.titleMedium
                 )
                 LocationMethod.values().forEach { method ->
