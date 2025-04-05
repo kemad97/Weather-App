@@ -10,7 +10,7 @@ import com.example.weatherapp.utils.ResultState
 import com.example.weatherapp.model.local.SettingsRepository
 import com.example.weatherapp.model.repo.WeatherRepository
 import com.example.weatherapp.model.local.FavoriteEntity
-import com.example.weatherapp.model.ApiResponse
+import com.example.weatherapp.model.Response
 import com.example.weatherapp.settings.Settings
 import com.example.weatherapp.settings.TemperatureUnit
 import com.example.weatherapp.settings.WindSpeedUnit
@@ -26,8 +26,8 @@ class FavoriteViewModel(
     private val _favorites = MutableStateFlow<List<FavoriteEntity>>(emptyList())
     val favorites: StateFlow<List<FavoriteEntity>> = _favorites
 
-    private val _selectedWeather = MutableStateFlow<ResultState<ApiResponse>>(ResultState.Empty)
-    val selectedWeather: StateFlow<ResultState<ApiResponse>> = _selectedWeather
+    private val _selectedWeather = MutableStateFlow<ResultState<Response>>(ResultState.Empty)
+    val selectedWeather: StateFlow<ResultState<Response>> = _selectedWeather
 
     private val _settings = MutableStateFlow<Settings?>(null)
     val settings: StateFlow<Settings?> = _settings

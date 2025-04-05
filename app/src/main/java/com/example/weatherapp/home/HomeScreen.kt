@@ -30,7 +30,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.weatherapp.R
 import com.example.weatherapp.utils.ResultState
-import com.example.weatherapp.model.ApiResponse
+import com.example.weatherapp.model.Response
 import com.example.weatherapp.model.ListItem
 import com.example.weatherapp.settings.Settings
 import com.example.weatherapp.settings.TemperatureUnit
@@ -68,7 +68,7 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel()) {
                 is ResultState.Loading -> LoadingScreen()
                 is ResultState.Success -> {
                     WeatherScreen(
-                        (weatherState as ResultState.Success<ApiResponse>).data,
+                        (weatherState as ResultState.Success<Response>).data,
                         settings = settings ?: Settings()
                     )
 
@@ -85,18 +85,18 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel()) {
 
 @Preview(showSystemUi = true)
 @Composable
-fun WeatherScreen(apiResponse: ApiResponse, settings: Settings?) {
-    val cityName = apiResponse.city?.name ?: "Unknown"
-    val country = apiResponse.city?.country ?: ""
-    val temperature = apiResponse.list?.firstOrNull()?.main?.temp?.toString() ?: "--"
+fun WeatherScreen(response: Response, settings: Settings?) {
+    val cityName = response.city?.name ?: "Unknown"
+    val country = response.city?.country ?: ""
+    val temperature = response.list?.firstOrNull()?.main?.temp?.toString() ?: "--"
     val description =
-        apiResponse.list?.firstOrNull()?.weather?.firstOrNull()?.description ?: "Unknown"
-    val humidity = apiResponse.list?.firstOrNull()?.main?.humidity?.toString() ?: "--"
-    val windSpeed = apiResponse.list?.firstOrNull()?.wind?.speed?.toString() ?: "--"
-    val pressure = apiResponse.list?.firstOrNull()?.main?.pressure?.toString() ?: "--"
+        response.list?.firstOrNull()?.weather?.firstOrNull()?.description ?: "Unknown"
+    val humidity = response.list?.firstOrNull()?.main?.humidity?.toString() ?: "--"
+    val windSpeed = response.list?.firstOrNull()?.wind?.speed?.toString() ?: "--"
+    val pressure = response.list?.firstOrNull()?.main?.pressure?.toString() ?: "--"
 
-    val tempMax = apiResponse.list?.firstOrNull()?.main?.tempMax?.toString() ?: "--"
-    val tempMin = apiResponse.list?.firstOrNull()?.main?.tempMin?.toString() ?: "--"
+    val tempMax = response.list?.firstOrNull()?.main?.tempMax?.toString() ?: "--"
+    val tempMin = response.list?.firstOrNull()?.main?.tempMin?.toString() ?: "--"
 
 
 
@@ -233,7 +233,7 @@ fun WeatherScreen(apiResponse: ApiResponse, settings: Settings?) {
                         .fillMaxWidth()
                         .padding(vertical = 8.dp)
                 ) {
-                    items(apiResponse.list?.take(8) ?: emptyList()) { item ->
+                    items(response.list?.take(8) ?: emptyList()) { item ->
                         HourlyWeatherItem(
                             time = formatTime(item?.dtTxt ?: ""),
                             temp = "${item?.main?.temp ?: "--"}$tempUnit"
@@ -255,7 +255,7 @@ fun WeatherScreen(apiResponse: ApiResponse, settings: Settings?) {
 
                 // Daily Forecast Items
                 Column {
-                    apiResponse.list
+                    response.list
                         ?.filterNotNull()
                         ?.groupBy { it.dtTxt?.substring(0, 10) }
                         ?.map { it.value.first() }

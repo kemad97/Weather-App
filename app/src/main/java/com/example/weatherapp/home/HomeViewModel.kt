@@ -14,7 +14,7 @@ import com.example.weatherapp.utils.LocationTracker
 import com.example.weatherapp.utils.ResultState
 import com.example.weatherapp.model.local.SettingsRepository
 import com.example.weatherapp.model.repo.WeatherRepository
-import com.example.weatherapp.model.ApiResponse
+import com.example.weatherapp.model.Response
 import com.example.weatherapp.settings.LocationMethod
 import com.example.weatherapp.settings.Settings
 import com.example.weatherapp.settings.TemperatureUnit
@@ -28,14 +28,12 @@ class HomeViewModel(
     private val locationTracker: LocationTracker,
     private val settingsRepository: SettingsRepository
 ) : ViewModel() {
-    private val _isOnline = MutableStateFlow(true)
-    val isOnline: StateFlow<Boolean> = _isOnline
     private var currentLanguage: String? = null
 
 
 
-    private val _weatherData = MutableStateFlow<ResultState<ApiResponse>>(ResultState.Loading)
-    val weatherData: StateFlow<ResultState<ApiResponse>> = _weatherData
+    private val _weatherData = MutableStateFlow<ResultState<Response>>(ResultState.Loading)
+    val weatherData: StateFlow<ResultState<Response>> = _weatherData
 
     private val _settings = MutableStateFlow<Settings?>(null)
     val settings: StateFlow<Settings?> = _settings
@@ -44,24 +42,13 @@ class HomeViewModel(
     private var currentWindUnit = WindSpeedUnit.METER_PER_SEC
 
 
+
     init {
 
         observeLocationAndFetchWeather()
         observeSettings()
 
     }
-
-
-//    private fun checkConnectivity() {
-//        viewModelScope.launch {
-//            try {
-//                repository.fetchWeather(0.0, 0.0, BuildConfig.WEATHER_API_KEY)
-//                _isOnline.value = true
-//            } catch (e: Exception) {
-//                _isOnline.value = false
-//            }
-//        }
-//    }
 
      fun observeSettings() {
         viewModelScope.launch {
@@ -160,33 +147,10 @@ class HomeViewModel(
         }
     }
 
-//     fun fetchWeather(lat: Double, lon: Double) {
-//        viewModelScope.launch {
-//            try {
-//                _weatherData.value = ResultState.Loading
-//                val apiKey = BuildConfig.WEATHER_API_KEY
-//
-//                repository.fetchWeather(lat, lon, apiKey).collectLatest { response ->
-//
-//                    val currentSettings = _settings.value
-//                    _weatherData.value = ResultState.Success(response)
-//
-//                    if (currentSettings != null) {
-//                        convertWeatherData()
-//                    }
-//
-//                }
-//            } catch (e: Exception) {
-//                Log.e("API_ERROR", "Failed to fetch weather data: ${e.message}")
-//                _weatherData.value = ResultState.Error(e)
-//            }
-//        }
-//    }
-
 
     private fun convertTemperature(value: Double, targetUnit: TemperatureUnit): Double {
         val celsius = when (currentTempUnit) {
-            TemperatureUnit.CELSIUS -> value
+            TemperatureUnit.CELSIUS-> value
             TemperatureUnit.FAHRENHEIT -> (value - 32) * 5 / 9
             TemperatureUnit.KELVIN -> value - 273.15
         }

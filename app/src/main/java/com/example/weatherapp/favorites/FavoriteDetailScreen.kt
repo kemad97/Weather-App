@@ -44,7 +44,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.weatherapp.R
 import com.example.weatherapp.utils.ResultState
-import com.example.weatherapp.model.ApiResponse
+import com.example.weatherapp.model.Response
 import com.example.weatherapp.home.DailyForecastItem
 import com.example.weatherapp.home.HourlyWeatherItem
 import com.example.weatherapp.home.WeatherDetailItem
@@ -115,21 +115,21 @@ fun FavoriteDetailScreen(
 
 @Composable
 fun WeatherDetailContent(
-    apiResponse: ApiResponse, viewModel: FavoriteViewModel
+    response: Response, viewModel: FavoriteViewModel
 ) {
     val settings by viewModel.settings.collectAsState()
 
-    val cityName = apiResponse.city?.name ?: "--"
-    val country = apiResponse.city?.country ?: "--"
-    val temperature = apiResponse.list?.firstOrNull()?.main?.temp?.toString() ?: "--"
+    val cityName = response.city?.name ?: "--"
+    val country = response.city?.country ?: "--"
+    val temperature = response.list?.firstOrNull()?.main?.temp?.toString() ?: "--"
     val description =
-        apiResponse.list?.firstOrNull()?.weather?.firstOrNull()?.description ?: "--"
-    val humidity = apiResponse.list?.firstOrNull()?.main?.humidity?.toString() ?: "--"
-    val windSpeed = apiResponse.list?.firstOrNull()?.wind?.speed?.toString() ?: "--"
-    val pressure = apiResponse.list?.firstOrNull()?.main?.pressure?.toString() ?: "--"
+        response.list?.firstOrNull()?.weather?.firstOrNull()?.description ?: "--"
+    val humidity = response.list?.firstOrNull()?.main?.humidity?.toString() ?: "--"
+    val windSpeed = response.list?.firstOrNull()?.wind?.speed?.toString() ?: "--"
+    val pressure = response.list?.firstOrNull()?.main?.pressure?.toString() ?: "--"
 
-    val tempMax = apiResponse.list?.firstOrNull()?.main?.tempMax?.toString() ?: "--"
-    val tempMin = apiResponse.list?.firstOrNull()?.main?.tempMin?.toString() ?: "--"
+    val tempMax = response.list?.firstOrNull()?.main?.tempMax?.toString() ?: "--"
+    val tempMin = response.list?.firstOrNull()?.main?.tempMin?.toString() ?: "--"
 
 
     val currentDate = remember {
@@ -263,7 +263,7 @@ fun WeatherDetailContent(
                         .fillMaxWidth()
                         .padding(vertical = 8.dp)
                 ) {
-                    items(apiResponse.list?.take(8) ?: emptyList()) { item ->
+                    items(response.list?.take(8) ?: emptyList()) { item ->
                         HourlyWeatherItem(
                             time = formatTime(item?.dtTxt ?: ""),
                             temp = "${item?.main?.temp ?: "--"}$tempUnit"
@@ -285,7 +285,7 @@ fun WeatherDetailContent(
 
                 // Daily Forecast Items
                 Column {
-                    apiResponse.list
+                    response.list
                         ?.filterNotNull()
                         ?.groupBy { it.dtTxt?.substring(0, 10) }
                         ?.map { it.value.first() }

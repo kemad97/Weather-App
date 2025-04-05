@@ -1,6 +1,6 @@
 package com.example.weatherapp.model.remote
 
-import com.example.weatherapp.model.ApiResponse
+import com.example.weatherapp.model.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
@@ -17,7 +17,7 @@ interface WeatherApiService {
         @Query("dt") dt: Long = System.currentTimeMillis() / 1000,
         @Query("units") units: String = "metric", // in Celsius
         @Query("lang") lang: String = "en"
-    ): ApiResponse
+    ): Response
 
 
 

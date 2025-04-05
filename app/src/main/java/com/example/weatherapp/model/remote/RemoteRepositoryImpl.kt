@@ -2,7 +2,7 @@ package com.example.weatherapp.model.remote
 
 import android.content.SharedPreferences
 import com.example.weatherapp.model.local.SettingsRepository
-import com.example.weatherapp.model.ApiResponse
+import com.example.weatherapp.model.Response
 
 class RemoteRepositoryImpl(
     private val apiService: WeatherApiService,
@@ -11,7 +11,7 @@ class RemoteRepositoryImpl(
 {
     private val settingsRepository: SettingsRepository = SettingsRepository.getInstance( sharedPreferences)
 
-    override suspend fun getWeatherForecast(lat: Double, lon: Double, apiKey: String): ApiResponse {
+    override suspend fun getWeatherForecast(lat: Double, lon: Double, apiKey: String): Response {
         val language = when (settingsRepository.getLanguage()) {
             "ARABIC" -> "ar"
             else -> "en"

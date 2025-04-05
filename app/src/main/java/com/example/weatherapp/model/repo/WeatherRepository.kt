@@ -7,7 +7,7 @@ import com.example.weatherapp.model.local.AlertEntity
 import com.example.weatherapp.model.remote.RemoteRepository
 import com.example.weatherapp.model.remote.RemoteRepositoryImpl
 import com.example.weatherapp.model.remote.WeatherApi
-import com.example.weatherapp.model.ApiResponse
+import com.example.weatherapp.model.Response
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
@@ -19,7 +19,7 @@ class WeatherRepository(
         WeatherApi.retrofitService, sharedPreferences)
 ): IWeatherRepository {
 
-    override fun fetchWeather(lat: Double, lon: Double, apiKey: String): Flow<ApiResponse> = flow {
+    override fun fetchWeather(lat: Double, lon: Double, apiKey: String): Flow<Response> = flow {
         val response = remoteRepository.getWeatherForecast(lat, lon, apiKey)
         emit(response)
     }
