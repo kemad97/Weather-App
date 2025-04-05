@@ -1,4 +1,4 @@
-package com.example.weatherapp
+package com.example.weatherapp.utils
 
 
 sealed class ResultState<out T> {

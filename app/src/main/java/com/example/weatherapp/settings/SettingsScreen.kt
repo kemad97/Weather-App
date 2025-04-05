@@ -2,7 +2,6 @@
 
 package com.example.weatherapp.settings
 
-import android.app.Activity
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -12,10 +11,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.weatherapp.LocaleHelper
-import com.example.weatherapp.MainActivity
+import com.example.weatherapp.utils.LocaleHelper
 import com.example.weatherapp.R
-import com.example.weatherapp.ResultState
+import com.example.weatherapp.utils.ResultState
 import com.example.weatherapp.home.EmptyScreen
 import com.example.weatherapp.home.ErrorScreen
 import com.example.weatherapp.home.LoadingScreen
@@ -29,7 +27,6 @@ fun SettingsScreen(
     val settingsState by viewModel.settingsState.collectAsState()
     val currentSettings by viewModel.currentSettings.collectAsState()
     val context = LocalContext.current
-
 
     var currentLanguage by remember { mutableStateOf(currentSettings?.language) }
 
@@ -64,7 +61,10 @@ fun SettingsScreen(
                     },
                     onTemperatureUnitChange = viewModel::updateTemperatureUnit,
                     onWindSpeedUnitChange = viewModel::updateWindSpeedUnit,
-                    onLanguageChange = viewModel::updateLanguage,
+                    onLanguageChange = { language ->
+                        viewModel.updateLanguage(language)
+                        currentLanguage = language
+                    },
                     modifier = Modifier.padding(padding)
                 )
             }

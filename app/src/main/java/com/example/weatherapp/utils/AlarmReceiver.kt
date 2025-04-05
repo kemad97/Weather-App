@@ -1,4 +1,4 @@
-package com.example.weatherapp
+package com.example.weatherapp.utils
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -10,12 +10,9 @@ import android.media.AudioManager
 import android.media.Ringtone
 import android.media.RingtoneManager
 import android.os.Build
-import android.os.PowerManager
 import androidx.core.app.NotificationCompat
-import com.example.weatherapp.data.local.AlertType
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import com.example.weatherapp.R
+import com.example.weatherapp.model.local.AlertType
 
 class AlarmReceiver : BroadcastReceiver() {
 

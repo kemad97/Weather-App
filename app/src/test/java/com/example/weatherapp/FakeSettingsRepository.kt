@@ -1,6 +1,6 @@
 package com.example.weatherapp
 
-import com.example.weatherapp.data.local.SettingsRepository
+import com.example.weatherapp.model.local.SettingsRepository
 import com.example.weatherapp.settings.Language
 import com.example.weatherapp.settings.LocationMethod
 import com.example.weatherapp.settings.Settings

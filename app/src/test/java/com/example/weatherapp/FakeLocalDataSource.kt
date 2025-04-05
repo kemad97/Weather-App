@@ -1,8 +1,8 @@
 package com.example.weatherapp
 
-import com.example.weatherapp.data.local.AlertEntity
-import com.example.weatherapp.data.local.FavoriteEntity
-import com.example.weatherapp.data.local.LocalDataSource
+import com.example.weatherapp.model.local.AlertEntity
+import com.example.weatherapp.model.local.FavoriteEntity
+import com.example.weatherapp.model.local.LocalDataSource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 

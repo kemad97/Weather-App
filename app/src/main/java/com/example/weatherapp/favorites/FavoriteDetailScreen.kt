@@ -43,7 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.weatherapp.R
-import com.example.weatherapp.ResultState
+import com.example.weatherapp.utils.ResultState
 import com.example.weatherapp.model.ApiResponse
 import com.example.weatherapp.home.DailyForecastItem
 import com.example.weatherapp.home.HourlyWeatherItem

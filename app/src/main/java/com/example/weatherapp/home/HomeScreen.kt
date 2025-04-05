@@ -29,7 +29,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.weatherapp.R
-import com.example.weatherapp.ResultState
+import com.example.weatherapp.utils.ResultState
 import com.example.weatherapp.model.ApiResponse
 import com.example.weatherapp.model.ListItem
 import com.example.weatherapp.settings.Settings
@@ -194,12 +194,12 @@ fun WeatherScreen(apiResponse: ApiResponse, settings: Settings?) {
                             horizontalArrangement = Arrangement.Center
                         ) {
                             Text(
-                                text = "H: $tempMax$tempUnit",
-                                fontSize = 16.sp,
+                                text = stringResource(R.string.h,tempMax,tempUnit) ,
+                            fontSize = 16.sp,
                                 modifier = Modifier.padding(end = 8.dp)
                             )
                             Text(
-                                text = "L: $tempMin$tempUnit",
+                                text = stringResource(R.string.l,tempMin,tempUnit) ,
                                 fontSize = 16.sp,
                                 modifier = Modifier.padding(start = 8.dp)
                             )

@@ -32,10 +32,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.example.weatherapp.AlarmReceiver
+import com.example.weatherapp.utils.AlarmReceiver
 import com.example.weatherapp.R
-import com.example.weatherapp.data.local.AlertType
-import com.example.weatherapp.data.local.AlertEntity
+import com.example.weatherapp.model.local.AlertType
+import com.example.weatherapp.model.local.AlertEntity
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -319,12 +319,12 @@ fun AlertItem(
                     style = MaterialTheme.typography.titleMedium
                 )
                 Text(
-                    text = "At: ${formatDateTime(alert.startTime)}",
+                    text = stringResource(R.string.at, formatDateTime(alert.startTime)),
                     style = MaterialTheme.typography.bodyMedium
                 )
 
                 Text(
-                    text = "Type: ${alert.type}",
+                    text = stringResource(R.string.type, alert.type),
                     style = MaterialTheme.typography.bodySmall
                 )
             }

@@ -48,5 +48,6 @@
     <string name="favorites">االمفضلات</string>
     <string name="alerts">التنبيهات</string>
     <string name="location_method">تحديد المكان</string>
-
+    <string name="at">عند: %1$s</string>
+    <string name="type">النوع: %1$s</string>
 </resources>

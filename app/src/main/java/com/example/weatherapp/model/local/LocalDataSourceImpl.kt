@@ -1,5 +1,6 @@
-package com.example.weatherapp.data.local
+package com.example.weatherapp.model.local
 
+import com.example.weatherapp.model.local.Database.FavoritesAndAlertsDao
 import kotlinx.coroutines.flow.Flow
 
 class LocalDataSourceImpl(private val favAlertsDao: FavoritesAndAlertsDao) : LocalDataSource {

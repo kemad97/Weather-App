@@ -1,10 +1,11 @@
 package com.example.weatherapp
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.example.weatherapp.data.local.SettingsRepository
+import com.example.weatherapp.model.local.SettingsRepository
 import com.example.weatherapp.settings.Language
 import com.example.weatherapp.settings.SettingsViewModel
 import com.example.weatherapp.settings.TemperatureUnit
 import com.example.weatherapp.settings.WindSpeedUnit
+import com.example.weatherapp.utils.ResultState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.*

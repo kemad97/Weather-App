@@ -5,10 +5,10 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.matcher.ViewMatchers.assertThat
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
-import com.example.weatherapp.data.local.WeatherDatabase
-import com.example.weatherapp.data.local.FavoriteEntity
-import com.example.weatherapp.data.local.LocalDataSource
-import com.example.weatherapp.data.local.LocalDataSourceImpl
+import com.example.weatherapp.model.local.Database.WeatherDatabase
+import com.example.weatherapp.model.local.FavoriteEntity
+import com.example.weatherapp.model.local.LocalDataSource
+import com.example.weatherapp.model.local.LocalDataSourceImpl
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest

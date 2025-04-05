@@ -47,5 +47,7 @@
     <string name="favorites">Favorites</string>
     <string name="alerts">Alerts</string>
     <string name="location_method">Location Method</string>
+    <string name="at">At: %1$s</string>
+    <string name="type">Type: %1$s</string>
 
 </resources>

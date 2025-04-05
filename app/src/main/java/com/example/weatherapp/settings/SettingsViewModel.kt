@@ -2,8 +2,8 @@ package com.example.weatherapp.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.weatherapp.ResultState
-import com.example.weatherapp.data.local.SettingsRepository
+import com.example.weatherapp.utils.ResultState
+import com.example.weatherapp.model.local.SettingsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -16,8 +16,6 @@ class SettingsViewModel(private val repository: SettingsRepository) : ViewModel(
     private val _currentSettings = MutableStateFlow<Settings?>(null)
     val currentSettings: StateFlow<Settings?> = _currentSettings.asStateFlow()
 
-    private val _languageState = MutableStateFlow<Language>(Language.ENGLISH)
-    val languageState: StateFlow<Language> = _languageState.asStateFlow()
 
     init {
         loadSettings()
@@ -72,7 +70,6 @@ class SettingsViewModel(private val repository: SettingsRepository) : ViewModel(
         try {
             repository.updateLanguage(language)
             updateSettingsState { it.copy(language = language) }
-            _languageState.value = language // Update language state
 
         } catch (e: Exception) {
             _settingsState.value = ResultState.Error(e)

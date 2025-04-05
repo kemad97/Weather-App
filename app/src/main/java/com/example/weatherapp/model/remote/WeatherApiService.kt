@@ -1,4 +1,4 @@
-package com.example.weatherapp.data.remote
+package com.example.weatherapp.model.remote
 
 import com.example.weatherapp.model.ApiResponse
 import retrofit2.Retrofit

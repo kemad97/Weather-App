@@ -1,4 +1,4 @@
-package com.example.weatherapp.data.local
+package com.example.weatherapp.model.local
 
 import android.content.SharedPreferences
 import com.example.weatherapp.settings.Language

@@ -45,7 +45,7 @@
             android:exported="false" />
 
         <receiver
-            android:name=".AlarmReceiver"
+            android:name=".utils.AlarmReceiver"
             android:exported="true" />
 
     </application>

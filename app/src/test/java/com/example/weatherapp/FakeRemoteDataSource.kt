@@ -1,6 +1,6 @@
 package com.example.weatherapp
 
-import com.example.weatherapp.data.remote.RemoteRepository
+import com.example.weatherapp.model.remote.RemoteRepository
 import com.example.weatherapp.model.ApiResponse
 import com.example.weatherapp.model.City
 

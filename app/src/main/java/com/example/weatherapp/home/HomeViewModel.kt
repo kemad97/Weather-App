@@ -10,10 +10,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import androidx.lifecycle.ViewModelProvider
 import com.example.weatherapp.BuildConfig
-import com.example.weatherapp.LocationTracker
-import com.example.weatherapp.ResultState
-import com.example.weatherapp.data.local.SettingsRepository
-import com.example.weatherapp.data.WeatherRepository
+import com.example.weatherapp.utils.LocationTracker
+import com.example.weatherapp.utils.ResultState
+import com.example.weatherapp.model.local.SettingsRepository
+import com.example.weatherapp.model.repo.WeatherRepository
 import com.example.weatherapp.model.ApiResponse
 import com.example.weatherapp.settings.LocationMethod
 import com.example.weatherapp.settings.Settings

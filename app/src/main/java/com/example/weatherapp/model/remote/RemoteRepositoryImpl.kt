@@ -1,7 +1,7 @@
-package com.example.weatherapp.data.remote
+package com.example.weatherapp.model.remote
 
 import android.content.SharedPreferences
-import com.example.weatherapp.data.local.SettingsRepository
+import com.example.weatherapp.model.local.SettingsRepository
 import com.example.weatherapp.model.ApiResponse
 
 class RemoteRepositoryImpl(

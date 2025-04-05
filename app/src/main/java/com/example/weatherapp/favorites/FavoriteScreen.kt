@@ -14,7 +14,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.weatherapp.R
-import com.example.weatherapp.data.local.FavoriteEntity
+import com.example.weatherapp.model.local.FavoriteEntity
 
 
 @OptIn(ExperimentalMaterial3Api::class)

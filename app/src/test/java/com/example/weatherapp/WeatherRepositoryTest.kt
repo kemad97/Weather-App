@@ -1,9 +1,8 @@
 package com.example.weatherapp
 
 import android.content.SharedPreferences
-import com.example.weatherapp.data.WeatherRepository
-import com.example.weatherapp.data.local.AlertEntity
-import com.example.weatherapp.data.local.FavoriteEntity
+import com.example.weatherapp.model.repo.WeatherRepository
+import com.example.weatherapp.model.local.FavoriteEntity
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
@@ -12,7 +11,6 @@ import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Before
 import org.junit.Test
-import org.mockito.Mockito.mock
 
 @ExperimentalCoroutinesApi
 class WeatherRepositoryTest {
