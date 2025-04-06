@@ -275,6 +275,7 @@ fun DailyForecastItem(forecast: ListItem, tempUnit: String) {
      val tempMaxx = forecast.main?.tempMax?.toString() ?: "--"
     val tempMinn = forecast.main?.tempMin?.toString() ?: "--"
     val temp = forecast.main?.temp?.toString() ?: "--"
+    val desc = forecast.weather?.firstOrNull()?.description ?: "--"
 
     Card(
         modifier = Modifier
@@ -301,7 +302,7 @@ fun DailyForecastItem(forecast: ListItem, tempUnit: String) {
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = "Clear sky",
+                    text = ("$desc"),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
