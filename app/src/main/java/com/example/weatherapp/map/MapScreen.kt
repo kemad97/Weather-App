@@ -1,7 +1,8 @@
-package com.example.weatherapp.ui.screens
+package com.example.weatherapp.map
+
+import android.content.Context
 import android.location.Address
 import android.location.Geocoder
-import android.preference.PreferenceManager
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,22 +18,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.example.weatherapp.utils.LocationTracker
+import androidx.compose.ui.viewinterop.AndroidView
 import com.example.weatherapp.R
-import com.example.weatherapp.settings.LocationMethod
-import com.example.weatherapp.settings.SettingsViewModel
+import com.example.weatherapp.favorites.FavoriteViewModel
 import kotlinx.coroutines.delay
-import org.osmdroid.config.Configuration
-
+import org.osmdroid.events.MapEventsReceiver
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
+import org.osmdroid.views.overlay.MapEventsOverlay
 import org.osmdroid.views.overlay.Marker
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MapScreenSettings(
-    settingsViewModel: SettingsViewModel,
+fun MapScreen(
+    viewModel: FavoriteViewModel,
     onNavigateBack: () -> Unit
 ) {
     val context = LocalContext.current
@@ -44,22 +44,10 @@ fun MapScreenSettings(
     var currentMapView by remember { mutableStateOf<MapView?>(null) }
     var searchActive by remember { mutableStateOf(false) }  // search panel visibility
 
-
-    LaunchedEffect(Unit) {
-        Configuration.getInstance()
-            .load(context, PreferenceManager.getDefaultSharedPreferences(context))
-    }
-
-    LaunchedEffect(selectedLocation) {
-        selectedLocation?.let { location ->
-            cityName = getCityName(context, location.latitude, location.longitude)
-        }
-    }
-
     LaunchedEffect(searchQuery) {
         if (searchQuery.length >= 3) {
             isSearching = true
-            delay(500)
+            delay(500) // Debounce delay
             val geocoder = Geocoder(context)
             try {
                 @Suppress("DEPRECATION")
@@ -74,10 +62,16 @@ fun MapScreenSettings(
         }
     }
 
+    LaunchedEffect(selectedLocation) {
+        selectedLocation?.let { location ->
+            cityName = getCityName(context, location.latitude, location.longitude)
+        }
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Select Location") },
+                title = { Text("Add Favorite Location") },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back")
@@ -91,6 +85,7 @@ fun MapScreenSettings(
                 .fillMaxSize()
                 .padding(padding)
         ) {
+            // Map in background
             MapViewContainer(
                 context = context,
                 onLocationSelected = { point ->
@@ -119,7 +114,7 @@ fun MapScreenSettings(
                         // Close the search panel
                         searchActive = false
                     },
-                    active = searchActive, // Controls the visibility of the search panel
+                    active = searchActive, //  visibility of the search panel
                     onActiveChange = { newState ->
                         searchActive = newState
                     },
@@ -144,6 +139,7 @@ fun MapScreenSettings(
                                             mapView?.controller?.animateTo(point)
                                             mapView?.controller?.setZoom(15.0)
 
+                                            // Clear existing markers
                                             mapView?.overlays?.clear()
 
                                             // Add new marker
@@ -184,7 +180,6 @@ fun MapScreenSettings(
                     }
                 }
 
-
                 if (selectedLocation != null) {
                     Surface(
                         modifier = Modifier
@@ -202,12 +197,15 @@ fun MapScreenSettings(
                 }
             }
 
+            // Save FAB
             FloatingActionButton(
                 onClick = {
                     selectedLocation?.let { location ->
-                        LocationTracker.getInstance(context).myLocation.value =
-                            Pair(location.latitude, location.longitude)
-                        settingsViewModel.updateLocationMethod(LocationMethod.MAP)
+                        viewModel.addFavorite(
+                            cityName = cityName.ifEmpty { "Custom Location" },
+                            lat = location.latitude,
+                            lon = location.longitude
+                        )
                         onNavigateBack()
                     }
                 },
@@ -215,8 +213,76 @@ fun MapScreenSettings(
                     .align(Alignment.BottomEnd)
                     .padding(16.dp),
             ) {
-                Icon(Icons.Default.Check, "Set location")
+                Icon(Icons.Default.Check, "Save location")
             }
         }
     }
 }
+
+
+@Composable
+fun MapViewContainer(
+    context: Context,
+    onLocationSelected: (GeoPoint) -> Unit,
+    onMapViewCreated: (MapView) -> Unit
+) {
+    var mapView by remember { mutableStateOf<MapView?>(null) }
+
+    AndroidView(
+        modifier = Modifier.fillMaxSize(),
+        factory = { context ->
+            MapView(context).apply {
+                setTileSource(TileSourceFactory.MAPNIK)
+                setMultiTouchControls(true)
+                controller.setZoom(5.0)
+                controller.setCenter(GeoPoint(30.0, 31.0)) // Default
+
+                // Add map click listener
+                val mapEventsOverlay = MapEventsOverlay(object : MapEventsReceiver {
+                    override fun singleTapConfirmedHelper(p: GeoPoint): Boolean {
+                        overlays.removeAll { it is Marker }
+                        val marker = Marker(this@apply).apply {
+                            position = p
+                            setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+                            icon = context.resources.getDrawable(R.drawable.ic_location, null)
+                            title = "Selected Location"
+                        }
+                        overlays.add(marker)
+                        onLocationSelected(p)
+                        invalidate()
+                        return true
+                    }
+
+                    override fun longPressHelper(p: GeoPoint): Boolean = false
+                })
+                overlays.add(mapEventsOverlay)
+                mapView = this
+                onMapViewCreated(this)
+            }
+        }
+    )
+
+    // Clean up
+    DisposableEffect(Unit) {
+        onDispose {
+            mapView?.onDetach()
+        }
+    }
+}
+
+
+
+
+fun getCityName(context: Context, lat: Double, lon: Double): String {
+    val geocoder = Geocoder(context)
+    return try {
+        @Suppress("DEPRECATION")
+        val addresses = geocoder.getFromLocation(lat, lon, 1)
+        addresses?.firstOrNull()?.let { address ->
+            address.locality ?: address.subAdminArea ?: address.adminArea ?: "Unknown Location"
+        } ?: "Unknown Location"
+    } catch (e: Exception) {
+        "Unknown Location"
+    }
+}
+

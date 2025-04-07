@@ -2,6 +2,7 @@
 
 package com.example.weatherapp.settings
 
+import android.app.Activity
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -31,13 +32,25 @@ fun SettingsScreen(
     var currentLanguage by remember { mutableStateOf(currentSettings?.language) }
 
     // Observe language changes and update the locale
+//    LaunchedEffect(currentLanguage) {
+//        currentLanguage?.let { language ->
+//            val languageCode = when (language) {
+//                Language.ARABIC -> "ar"
+//                Language.ENGLISH -> "en"
+//            }
+//            LocaleHelper.updateLocale(context, languageCode)
+//        }
+//    }
+
     LaunchedEffect(currentLanguage) {
         currentLanguage?.let { language ->
             val languageCode = when (language) {
                 Language.ARABIC -> "ar"
                 Language.ENGLISH -> "en"
             }
-            LocaleHelper.updateLocale(context, languageCode)
+            (context as? Activity)?.let {
+                LocaleHelper.updateLocale(it, languageCode)
+            }
         }
     }
 

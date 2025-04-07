@@ -42,8 +42,8 @@ import com.example.weatherapp.model.repo.WeatherRepository
 import com.example.weatherapp.alerts.AlertsScreen
 import com.example.weatherapp.favorites.FavoritesScreen
 import com.example.weatherapp.home.HomeScreen
-import com.example.weatherapp.ui.screens.MapScreen
-import com.example.weatherapp.ui.screens.MapScreenSettings
+import com.example.weatherapp.map.MapScreen
+import com.example.weatherapp.map.MapScreenSettings
 import com.example.weatherapp.alerts.AlertsViewModel
 import com.example.weatherapp.favorites.FavoriteViewModel
 import com.example.weatherapp.favorites.FavoriteViewModelFactory
