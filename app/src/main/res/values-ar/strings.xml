@@ -51,6 +51,14 @@
     <string name="at">عند: %1$s</string>
     <string name="type">النوع: %1$s</string>
     <string name="temp">الحرارة: %1$s%2$s</string>
-
+    <string name="gps">نظام تحديد المواقع</string>
+    <string name="map">خريطة</string>
+    <string name="celsius">مئوية</string>
+    <string name="fahrenheit">فهرنهايت</string>
+    <string name="kelvin">كلفن</string>
+    <string name="meter_per_sec">متر/ثانية</string>
+    <string name="miles_per_hour">ميل/ساعة</string>
+    <string name="arabic">العربية</string>
+    <string name="english">English</string>
 
 </resources>

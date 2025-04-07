@@ -50,5 +50,15 @@
     <string name="at">At: %1$s</string>
     <string name="type">Type: %1$s</string>
     <string name="temp">Temp: %1$s %2$s</string>
+    <string name="gps">GPS</string>
+    <string name="map">Map</string>
+    <string name="celsius">CELSIUS</string>
+    <string name="fahrenheit">FAHRENHEIT</string>
+    <string name="kelvin">KELVIN</string>
+
+    <string name="meter_per_sec">METER_PER_SEC</string>
+    <string name="miles_per_hour">MILES_PER_HOUR</string>
+    <string name="arabic">Arabic</string>
+    <string name="english">English</string>
 
 </resources>

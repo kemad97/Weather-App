@@ -125,7 +125,12 @@ private fun SettingsContent(
                             onClick = {onLocationMethodChange(method) }
                         )
                         Text(
-                            text = method.name,
+                            text = stringResource(
+                                when (method) {
+                                    LocationMethod.GPS -> R.string.gps
+                                    LocationMethod.MAP -> R.string.map
+                                }
+                            ),
                             modifier = Modifier.padding(start = 8.dp)
                         )
                     }
@@ -154,7 +159,13 @@ private fun SettingsContent(
                             onClick = { onTemperatureUnitChange(unit) }
                         )
                         Text(
-                            text = unit.name,
+                            text = stringResource(
+                                when (unit) {
+                                    TemperatureUnit.CELSIUS-> R.string.celsius
+                                    TemperatureUnit.FAHRENHEIT -> R.string.fahrenheit
+                                    TemperatureUnit.KELVIN -> R.string.kelvin
+                                }
+                            ),
                             modifier = Modifier.padding(start = 8.dp)
                         )
                     }
@@ -183,7 +194,12 @@ private fun SettingsContent(
                             onClick = { onWindSpeedUnitChange(unit) }
                         )
                         Text(
-                            text = unit.name.replace("_", " "),
+                            text = stringResource(
+                                when (unit) {
+                                    WindSpeedUnit.METER_PER_SEC -> R.string.meter_per_sec
+                                    WindSpeedUnit.MILES_PER_HOUR -> R.string.miles_per_hour
+                                }
+                            ),
                             modifier = Modifier.padding(start = 8.dp)
                         )
                     }
@@ -212,7 +228,12 @@ private fun SettingsContent(
                             onClick = { onLanguageChange(language) }
                         )
                         Text(
-                            text = language.name.capitalize(),
+                            text = stringResource(
+                                when (language) {
+                                    Language.ARABIC -> R.string.arabic
+                                    Language.ENGLISH -> R.string.english
+                                }
+                            ),
                             modifier = Modifier.padding(start = 8.dp)
                         )
                     }
@@ -222,6 +243,6 @@ private fun SettingsContent(
     }
 }
 
-private fun String.capitalize(): String {
-    return this.lowercase().replaceFirstChar { it.uppercase() }
-}
+//private fun String.capitalize(): String {
+//    return this.lowercase().replaceFirstChar { it.uppercase() }
+//}
